@@ -420,17 +420,14 @@ function updateSectionView(){
   saveState()
 }
 function setSection(i){sectionByStep[step]=i;showAllSections=false;updateSectionView();window.scrollTo(0,0)}
-function navigateSectionByKeyboard(event){
+function navigateStepByKeyboard(event){
   if(!['ArrowLeft','ArrowRight'].includes(event.key)||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||event.isComposing||event.repeat)return;
   const target=event.target;
   if(target instanceof Element&&target.closest('input, textarea, select, [contenteditable], [role="textbox"], [role="slider"]'))return;
-  const panels=stagePanels();
-  if(panels.length<=1)return;
-  const current=Math.max(0,Math.min(panels.length-1,Number(sectionByStep[step])||0));
-  const next=current+(event.key==='ArrowRight'?1:-1);
-  if(next<0||next>=panels.length)return;
+  const next=step+(event.key==='ArrowRight'?1:-1);
+  if(next<0||next>=steps.length)return;
   event.preventDefault();
-  setSection(next);
+  setStep(next);
 }
 function render(){snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · SERVERLESS VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=4&&step<=6;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===7?'Improve offline →':step===8?'Relevance Studio →':step===9?'Online event →':step===10?'Improve again →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
 function setStep(i){step=Math.max(0,Math.min(steps.length-1,i));sectionByStep[step]=0;showAllSections=false;status('');render();window.scrollTo(0,0)}
@@ -458,7 +455,7 @@ async function init(){
   $('#section-previous').onclick=()=>setSection((sectionByStep[step]||0)-1);
   $('#section-next').onclick=()=>setSection((sectionByStep[step]||0)+1);
   $('#toggle-sections').onclick=()=>{showAllSections=!showAllSections;updateSectionView()};
-  document.addEventListener('keydown',navigateSectionByKeyboard);
+  document.addEventListener('keydown',navigateStepByKeyboard);
   render();status('');
 }
 init().catch(error=>status(`Workshop could not load: ${error.message}`));
