@@ -281,6 +281,13 @@ textarea { display: block; width: 100%; min-height: 170px; resize: vertical; fon
 .eval-finding .eval-worked-badge { display: inline-block; margin-top: 8px; border-radius: 4px; background: #DDF7EE; padding: 3px 7px; color: #05645E; font-size: 11px; font-weight: 700; }
 .eval-finding p { margin: 5px 0 0; font-size: 12px; line-height: 1.45; }
 .eval-finding .eval-signal { color: var(--midnight); font-weight: 700; }
+.eval-finding .eval-example-links { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; margin-top: 9px; }
+.eval-example-links button { min-width: 0; border: 1px solid #B3D8D2; border-radius: 5px; background: #E8F8F3; color: var(--midnight); padding: 7px; text-align: left; cursor: pointer; }
+.eval-example-links button:hover { border-color: #008F83; background: #DDF7EE; }
+.eval-example-links button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.eval-example-links b, .eval-example-links small { display: block; line-height: 1.3; }
+.eval-example-links b { font-size: 11px; }
+.eval-example-links small { margin-top: 3px; color: var(--muted); font-size: 10px; }
 .eval-other-gaps { border: 1px solid var(--line); border-radius: 7px; background: #f6f9ff; padding: 10px 12px; margin: 12px 0; }
 .eval-other-gaps > strong { color: var(--midnight); font-size: 13px; }
 .eval-other-gaps p { margin: 5px 0 0; font-size: 12px; line-height: 1.45; }
