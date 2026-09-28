@@ -1,0 +1,359 @@
+{
+  "index": "sg-food-vector-workshop-v2",
+  "model": ".jina-embeddings-v5-text-small",
+  "documents": [
+    {
+      "id": "D01",
+      "title": "Hainanese chicken rice recipe",
+      "content": "Hainanese chicken rice recipe. Poach chicken with ginger and spring onion for 35 minutes. Cook rice in chicken stock with garlic and pandan leaves. Serve with cucumber and chilli sauce.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D02",
+      "title": "Chicken rice search tags",
+      "content": "Hainanese chicken rice chicken rice recipe how to cook chicken poach time. These are search tags, not ingredients or cooking instructions.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D03",
+      "title": "Roasted chicken rice recipe",
+      "content": "Roasted chicken rice recipe. Marinate chicken with soy sauce and five spice, then roast at 190 C for 45 minutes. Serve with rice cooked in chicken stock.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D04",
+      "title": "Eggplant sambal recipe",
+      "content": "Eggplant sambal recipe. Slice eggplant and fry until soft. Pound dried chilli, shallots and belacan, then cook the sambal and toss with the eggplant.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D05",
+      "title": "Nasi lemak recipe",
+      "content": "Nasi lemak recipe. Cook rice with coconut milk and pandan leaves. Serve with sambal, cucumber, egg and ikan bilis.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D06",
+      "title": "Mee goreng recipe",
+      "content": "Mee goreng recipe. Stir-fry yellow noodles with garlic, egg, bean sprouts and sweet soy sauce. Finish with lime.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D07",
+      "title": "Kaya toast overview",
+      "content": "Kaya toast is a familiar Singapore breakfast often served with soft-boiled eggs and kopi. This article describes the dish but gives no ingredient amounts or preparation steps.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D08",
+      "title": "Z&V Cafe kaya toast recipe",
+      "content": "Z&V Cafe serves kaya toast, soft-boiled eggs, kopi, nasi lemak and curry puffs. For its kaya toast, toast two slices of bread until crisp. Spread each with one tablespoon of kaya, add two thin slices of cold butter, then sandwich and cut the toast. Serve with eggs and kopi.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D09",
+      "title": "RC-123 rice cooker instructions",
+      "content": "RC-123 rice cooker instructions. Rinse the rice, add water to the marked line, close the lid and press Cook. Leave on Keep Warm for 10 minutes before serving.",
+      "category": "guide",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D10",
+      "title": "RC-999 rice cooker instructions",
+      "content": "RC-999 rice cooker instructions. Choose the Quick Rice programme on the touch display, then press Start. This guide is for model RC-999.",
+      "category": "guide",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D11",
+      "title": "Peanut-free satay-style sauce",
+      "content": "Peanut-free satay-style sauce. Blend toasted sunflower seeds, coconut milk, chilli, lemongrass and tamarind. Contains no peanuts. For an allergy, verify every ingredient and avoid cross-contact.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D12",
+      "title": "Peanut satay sauce",
+      "content": "Peanut satay sauce. Grind roasted peanuts with chilli, lemongrass, coconut milk and palm sugar. Contains peanuts and is unsuitable for a peanut allergy.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D13",
+      "title": "Rasa Corner archived lunch menu",
+      "content": "Rasa Corner archived lunch menu, old version. Chicken rice was listed at $4.50 and nasi lemak at $4.00. This menu has been replaced; do not use these prices as current.",
+      "category": "menu",
+      "status": "archived",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D14",
+      "title": "Rasa Corner current lunch menu",
+      "content": "Rasa Corner current lunch menu. Chicken rice is listed at $5.50 and nasi lemak at $4.80. This is the current menu in the fictional workshop dataset.",
+      "category": "menu",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D15",
+      "title": "Chicken rice stall review",
+      "content": "Chicken rice stall review. A diner liked the tender chicken and fragrant rice, but this review does not provide a recipe or cooking times.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D16",
+      "title": "Vegetarian chicken rice-style recipe",
+      "content": "Vegetarian chicken rice-style recipe. Cook rice with ginger, garlic and vegetable stock. Serve with tofu, cucumber and chilli sauce; no chicken is used.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D17",
+      "title": "White chicken rice method",
+      "content": "For this Singapore hawker-style dish, simmer a whole chicken with ginger and spring onion for 32 minutes, then cool it quickly. Cook the rice in the chicken poaching broth with garlic and pandan. Serve with cucumber and chilli sauce.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D18",
+      "title": "Hainanese chicken rice cooking-time search index",
+      "content": "Hainanese chicken rice how to cook chicken poach time. This is a directory of search phrases. It has no recipe, chicken cooking instructions or rice method.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D19",
+      "title": "Brinjal recipe keyword index",
+      "content": "Brinjal brinjal recipe cooking brinjal. This page lists search keywords only; it has no ingredients, heat setting, cooking time or steps.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D20",
+      "title": "Sambal aubergine cooking method",
+      "content": "Cut aubergine into thick slices and pan-fry until soft. Pound dried chilli with shallots and belacan, fry the paste until fragrant, then toss the cooked aubergine through the sambal.",
+      "category": "recipe",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D21",
+      "title": "RC-123 rice cooker product listing",
+      "content": "RC-123 rice cooker instructions and manual search page. This listing identifies the RC-123 model but does not explain how much water to add or how to start cooking.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D22",
+      "title": "RC-123 quick-start guide",
+      "content": "For the RC-123 rice cooker, rinse the rice and fill water to the matching cup mark. Close the lid, press Cook, and rest the rice on Keep Warm for 10 minutes before serving.",
+      "category": "guide",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D23",
+      "title": "Classic kaya toast search guide",
+      "content": "Kaya toast recipe ingredients steps. This search guide lists kaya toast recipe keywords and links, but gives no preparation steps or amounts.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D24",
+      "title": "Kopi Lane kaya toast review",
+      "content": "Kaya toast recipe ingredients steps. A diner praises Kaya Toast with kopi. This review names butter and kaya but gives no measured ingredients or instructions.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D25",
+      "title": "Breakfast House kaya toast menu",
+      "content": "Kaya toast recipe ingredients steps. The breakfast menu lists kaya toast, kopi and eggs, but gives no measured ingredients or method.",
+      "category": "menu",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D26",
+      "title": "Kaya toast recipe keyword index",
+      "content": "Kaya toast recipe ingredients steps kaya toast recipe ingredients steps. This index collects search phrases only, not a recipe or measurements.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D27",
+      "title": "Kaya toast recipe roundup",
+      "content": "Kaya toast recipe ingredients and steps. A roundup of cafes serving kaya toast; it describes breakfast choices without a method or amounts.",
+      "category": "reference",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    },
+    {
+      "id": "D28",
+      "title": "Kaya toast recipe menu note",
+      "content": "Kaya toast recipe ingredients and steps appears as a search label on this menu. The page has no cooking directions.",
+      "category": "menu",
+      "status": "current",
+      "initial": true,
+      "click_count": 0
+    }
+  ],
+  "queries": [
+    {
+      "id": "Q1",
+      "text": "Hainanese chicken rice how to cook chicken poach time",
+      "task": "Find a usable Hainanese chicken rice recipe with chicken cooking time and rice instructions.",
+      "labels": {
+        "D01": 3,
+        "D17": 3,
+        "D03": 1,
+        "D02": 0,
+        "D15": 0,
+        "D16": 0,
+        "D18": 0
+      }
+    },
+    {
+      "id": "Q2",
+      "text": "brinjal",
+      "task": "Find instructions for cooking brinjal, called eggplant or aubergine in the source documents.",
+      "labels": {
+        "D04": 3,
+        "D20": 3,
+        "D19": 0
+      }
+    },
+    {
+      "id": "Q3",
+      "text": "mee goreng noodles recipe",
+      "task": "Find a usable mee goreng noodle recipe with ingredients and cooking steps.",
+      "labels": {
+        "D06": 3,
+        "D05": 0,
+        "D03": 0
+      }
+    },
+    {
+      "id": "Q4",
+      "text": "RC-123 rice cooker instructions",
+      "task": "Find usable instructions for the exact RC-123 rice cooker, not a product listing or another model.",
+      "labels": {
+        "D09": 3,
+        "D22": 3,
+        "D10": 0,
+        "D21": 0
+      }
+    },
+    {
+      "id": "Q5",
+      "text": "peanut-free satay sauce",
+      "task": "Find a satay-style sauce without peanuts; a sauce containing peanuts is unsafe for this task.",
+      "labels": {
+        "D11": 3,
+        "D12": 0
+      }
+    },
+    {
+      "id": "Q6",
+      "text": "current Rasa Corner lunch menu",
+      "task": "Find the current menu in this fictional dataset, not the archived prices.",
+      "labels": {
+        "D14": 3,
+        "D13": 0,
+        "D08": 0
+      }
+    }
+  ],
+  "viralQuery": {
+    "id": "viral",
+    "text": "kaya toast recipe",
+    "task": "Find a usable kaya toast recipe with ingredients and preparation steps.",
+    "labels": {
+      "D08": 3,
+      "D07": 1,
+      "D23": 0,
+      "D24": 0,
+      "D25": 0,
+      "D26": 0,
+      "D27": 0,
+      "D28": 0
+    }
+  },
+  "onlineSimulation": {
+    "directReferrals": 500,
+    "searchResultImpressions": 120,
+    "searchResultClicks": 18,
+    "usefulResultClicks": 0
+  },
+  "abSimulation": {
+    "A": {
+      "searchSessions": 200,
+      "recipeTaskCompletions": 12,
+      "reformulations": 70,
+      "searchResultClicks": 30
+    },
+    "B": {
+      "searchSessions": 200,
+      "recipeTaskCompletions": 36,
+      "reformulations": 40,
+      "searchResultClicks": 50
+    }
+  }
+}

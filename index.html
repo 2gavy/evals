@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Elasticsearch Serverless Vector Search Workshop</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="topline"><div class="brand">Elasticsearch <span>Vector Search Workshop</span></div><div class="top-actions"><a href="./guide.md" target="_blank">Written guide ↗</a></div></div>
+    <nav id="nav" aria-label="Workshop steps"></nav>
+  </div>
+  <main>
+    <header><span id="eyebrow"></span><h1 id="title"></h1><p id="why"></p></header>
+    <section id="workshop-context" class="workshop-context"><label id="index-control">Workshop index <input id="index-name" spellcheck="false" aria-label="Workshop index name"></label><label id="query-control">Search query <select id="query-select" aria-label="Search query"></select></label><span id="context-task"></span></section>
+    <nav id="section-nav" class="section-nav" aria-label="Sections within this step" hidden><div class="section-nav-heading"><strong id="section-count"></strong><button id="toggle-sections" class="secondary" type="button">Show all sections</button></div><div id="section-tabs" class="section-tabs"></div><div class="section-nav-arrows"><button id="section-previous" class="secondary" type="button">← Previous part</button><button id="section-next" class="secondary" type="button">Next part →</button></div></nav>
+    <div id="stage"></div>
+    <div class="pager"><button id="previous" class="secondary">← Previous step</button><button id="next">Next step →</button></div>
+    <footer id="status" role="status"></footer>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>

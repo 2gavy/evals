@@ -1,0 +1,53 @@
+# Elasticsearch Serverless Vector Search Workshop
+
+This static workshop uses **28 fictional Singapore food documents** and fixed rankings captured from an Elasticsearch Serverless project. It needs no API key in the browser. The learning order is **search methods → offline evaluation → offline improvement → Relevance Studio → online signal → improvement again**.
+
+## 1. Set up and inspect search
+
+Create an Elasticsearch Serverless Vector Database project. Use the Mapping and Ingest steps on the site to create `sg-food-vector-workshop-v2` (or your own index name) and index all 28 documents. `content` supports BM25 keyword search; `semantic_content` is a `semantic_text` field populated from content using the pinned Jina inference endpoint. `category` and `status` support filters. `click_count` starts at zero and is reserved for the later event. Check that the bulk request returns `errors: false` and `_count` is 28.
+
+Try the six offline questions with Keyword, Vector and Hybrid. The same relevance judgments and K=3 are used for every comparison. Read the document content before the scores. In Q2, a query for *brinjal* illustrates a vocabulary mismatch with *eggplant* and *aubergine*. In Q4, the exact rice-cooker model matters. The single Z&V Cafe recipe, D08, is already indexed, but it is not an offline scenario.
+
+## 2. Evaluate offline
+
+A **scenario** is a query plus the user's task. A **judgment** is a 0–3 relevance grade for a scenario–document pair. Grades 2–3 count as relevant for binary metrics; NDCG uses the full grades.
+
+**Bring in the people before calculating the baseline.** After collecting representative queries and pooling candidate documents from keyword, vector and hybrid searches, an SME confirms the user's task, the authoritative answer and the 0–3 grading rubric. Expert evaluators apply that rubric to query–document pairs. A second reviewer checks ambiguous or high-impact examples; the SME resolves disagreements. Freeze the reviewed judgments (qrels), then calculate the metrics below. These judgments are prefilled in the workshop so participants can focus on the method.
+
+- **Precision@3:** relevant documents among the first three ÷ 3.
+- **Recall@3:** relevant documents found in the first three ÷ all known relevant documents.
+- **RR@3:** 1 ÷ the rank of the first relevant result, or 0 if none appears.
+- **MRR@3:** average RR@3 across the six queries.
+- **NDCG@3:** graded relevance discounted by rank, divided by the ideal ordering's score.
+
+Inspect failures by task. Q1's keyword result contains the correct chicken-rice recipe D01 at #3, behind two search-tag pages. Q2 has a vocabulary gap. Q5 still exposes a peanut sauce; Q6 still exposes an archived menu. One high aggregate metric cannot prove safety, freshness, or good performance for every query.
+
+## 3. Improve offline, then use Studio
+
+For Q1, test a **recipe ranking boost** on the same query, documents, grades and K=3. The captured keyword result changes from `D02 → D18 → D01` to `D01 → D02 → D18`. RR@3 rises **0.333 → 1.000** and NDCG@3 rises **0.294 → 0.587**. Precision@3 remains **0.333** and Recall@3 remains **0.500**: the relevant document moved up, while the other results remain visible. The +8 recipe weight is a workshop hypothesis; test more queries before applying it broadly.
+
+Relevance Studio makes the evaluation repeatable: **scenarios → judgments → strategies → benchmarks**. **Start with Q1, “Hainanese chicken rice how to cook chicken poach time.”** The SME confirms that the user needs a recipe with chicken cooking time and rice instructions. Expert evaluators review D01 and D17 as direct answers (grade 3) and D02 and D18 as search-tag pages that do not answer the task (grade 0). Then inspect Q2–Q6 for the complete offline baseline. Use Q1 alone when comparing the keyword baseline with the recipe-boost candidate. Expert evaluators enter the reviewed grades; the SME adjudicates disputes and signs off on the rubric before the benchmark is trusted. The new local workspace uses `sg-food-vector-workshop-v2`, rating scale 0–3, and the six offline scenarios. A local Studio workspace contains a six-query baseline benchmark and a separate Q1 boost comparison. Both were run with explicit judgments and no unrated results. In this Studio run, a grade-1 result counts as relevant for its binary metrics, while the workshop page uses grade 2 or higher. That is why its Precision/Recall may differ; compare definitions before comparing values.
+
+## 4. Online: Z&V Cafe goes viral
+
+The original six-query offline evaluation looks strong: **Hybrid mean NDCG@3 = 0.880** and **MRR@3 = 0.917**. Both are averages over those six judged tasks, not a promise about every future search. There is **one** Z&V Cafe document, D08. When interest in its kaya-toast recipe rises, users search `kaya toast recipe`—a task absent from that original evaluation set. Captured **Hybrid · RRF** ranks D08 **#8**, outside the visible top five. None of the top five results is useful for the recipe task (grade 2 or 3). The new query's NDCG@3 and RR@3 are both **0**. This is the lesson: high offline NDCG and MRR can coexist with a poor live experience when the test set misses real demand.
+
+A fictional social post sends **500 direct referral visits** to D08's recipe page. A separate, explicitly fictional search-event sample contains **120 search-result page impressions** and **18 clicks on those results**. Search CTR is **18 ÷ 120 × 100 = 15%**. None of those 18 clicks leads to a useful result in the visible top five, illustrating why CTR by itself can look healthy while users still miss the answer. The 500 direct social visits are excluded from search CTR. The traffic counts are a teaching simulation; only the rankings were captured from Elasticsearch.
+
+After finding the gap, ask an SME to confirm the new search task and expert evaluators to grade the surfaced results. Add the query to the **next offline evaluation set**. Hybrid mean NDCG@3 then becomes **0.754**, and MRR@3 becomes **(5.5 + 0) ÷ 7 = 0.786**. Those averages fall because the test set now includes the failure; the search ranking has not changed. Neither offline metrics nor simulated CTR proves online lift. A randomized user A/B test is still needed after a candidate passes offline checks.
+
+A real application should log source, document ID, unique clicks, impressions, CTR, reformulations and task completion. Remove bot and duplicate activity. An Elasticsearch keyword query will not change rank merely because clicks happened: the signal must be stored and included in a ranking strategy.
+
+## 5. Improve again and close the loop
+
+Keep **Hybrid · RRF** as A. The workshop stores D08's simulated `click_count` of 500 and tests B: the same hybrid candidate set, followed by a bounded click rescore of its top 10. A document outside that candidate set could not be rescued by rescoring. Only `recipe` documents whose title matches **all** query terms can receive the bonus; `sqrt(click_count × 0.05)` dampens large counts. This guardrail matters: an unguarded click boost also pushed D08 to #1 on unrelated *brinjal* and *current menu* searches in a diagnostic run. The guarded candidate left the original six top-three rankings unchanged in this fixed set.
+
+The captured top five change from `D23 → D25 → D24 → D07 → D26` to `D08 → D23 → D25 → D24 → D07`. For the new task, offline Precision@3 rises **0 → 0.333**, Recall@3 **0 → 1.000**, RR@3 **0 → 1.000**, and NDCG@3 **0 → 0.917**. NDCG remains below 1 because the related overview D07 (grade 1) is still outside the top three. These are offline calculations on captured results, not measured online gains.
+
+**Usual CI/CD practice:** Commit the search strategy alongside a versioned query set, expert relevance judgments and a reproducible index/data snapshot. On each ranking pull request, run the same queries against the baseline and candidate with [Relevance Studio benchmarks](https://github.com/elastic/relevance-studio) or Elasticsearch's [`_rank_eval` API](https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-rank-eval). Fail the release gate if the new critical task does not improve, if another critical query regresses, or if latency crosses an agreed limit. Inspect per-query NDCG, RR, recall and precision as well as averages; choose tolerances for this application rather than a universal threshold. Keep API credentials in CI secrets. A passing build moves to a staged release or canary, then an online A/B test. Schedule separate benchmarks on refreshed data to detect drift between releases.
+
+To test user benefit, randomly assign search users **50/50** to A (Hybrid RRF) or B (Hybrid plus guarded click rescore). Keep a user's assignment stable, run the arms concurrently, freeze the click-count feature, and change only the ranking strategy. Log the assigned arm, query, search-result impression, clicked document, reformulation, and recipe-task completion. Exclude direct social visits and bots. Choose **recipe-task completion** as the primary outcome; use reformulation and search CTR to diagnose behaviour, with latency, safety and unrelated queries as guardrails. Decide the needed sample size and test duration in advance, then compare rates with uncertainty rather than stopping after a promising early result.
+
+The page includes a **fictional A/B calculation** with 200 search sessions per arm: A completes 12 tasks (**6%**), B completes 36 (**18%**), a **12-percentage-point** difference. Reformulation falls from 70/200 (**35%**) to 40/200 (**20%**), while CTR rises from 30/200 (**15%**) to 50/200 (**25%**). Those figures teach the arithmetic; they are not measured user outcomes and do not establish a production win.
+
+Treat the factor and strict title match as experiments, not production defaults. When online behaviour reveals another failure, return to the SME to confirm the user need and ask expert evaluators to grade newly surfaced documents. Resolve disagreements before adding the case to the next offline evaluation set. The current Studio B3 benchmark compares these two strategies across the observed kaya-toast search and six earlier questions; its latest evaluation completed without failures.

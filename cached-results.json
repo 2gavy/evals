@@ -1,0 +1,271 @@
+{
+  "index": "sg-food-vector-workshop-v2",
+  "documentCount": 28,
+  "capturedAt": "2026-09-25T06:24:48+00:00",
+  "queryTexts": {
+    "Q1": "Hainanese chicken rice how to cook chicken poach time",
+    "Q2": "brinjal",
+    "Q3": "mee goreng noodles recipe",
+    "Q4": "RC-123 rice cooker instructions",
+    "Q5": "peanut-free satay sauce",
+    "Q6": "current Rasa Corner lunch menu"
+  },
+  "results": {
+    "Q1": {
+      "keyword": [
+        {
+          "id": "D02",
+          "score": 16.489159
+        },
+        {
+          "id": "D18",
+          "score": 15.343245
+        },
+        {
+          "id": "D01",
+          "score": 11.159133
+        }
+      ],
+      "vector": [
+        {
+          "id": "D01",
+          "score": 0.939418
+        },
+        {
+          "id": "D18",
+          "score": 0.88456905
+        },
+        {
+          "id": "D02",
+          "score": 0.8836432
+        }
+      ],
+      "hybrid": [
+        {
+          "id": "D01",
+          "score": 0.03226646
+        },
+        {
+          "id": "D02",
+          "score": 0.03226646
+        },
+        {
+          "id": "D18",
+          "score": 0.032258064
+        }
+      ]
+    },
+    "Q2": {
+      "keyword": [
+        {
+          "id": "D19",
+          "score": 4.41023
+        }
+      ],
+      "vector": [
+        {
+          "id": "D19",
+          "score": 0.77379155
+        },
+        {
+          "id": "D04",
+          "score": 0.686844
+        },
+        {
+          "id": "D20",
+          "score": 0.6667352
+        }
+      ],
+      "hybrid": [
+        {
+          "id": "D19",
+          "score": 0.032786883
+        },
+        {
+          "id": "D04",
+          "score": 0.016129032
+        },
+        {
+          "id": "D20",
+          "score": 0.015873017
+        }
+      ]
+    },
+    "Q3": {
+      "keyword": [
+        {
+          "id": "D06",
+          "score": 9.557324
+        },
+        {
+          "id": "D23",
+          "score": 1.8682767
+        },
+        {
+          "id": "D01",
+          "score": 1.237413
+        }
+      ],
+      "vector": [
+        {
+          "id": "D06",
+          "score": 0.909905
+        },
+        {
+          "id": "D17",
+          "score": 0.71380645
+        },
+        {
+          "id": "D01",
+          "score": 0.6917307
+        }
+      ],
+      "hybrid": [
+        {
+          "id": "D06",
+          "score": 0.032786883
+        },
+        {
+          "id": "D01",
+          "score": 0.031746034
+        },
+        {
+          "id": "D05",
+          "score": 0.031009614
+        }
+      ]
+    },
+    "Q4": {
+      "keyword": [
+        {
+          "id": "D09",
+          "score": 10.241168
+        },
+        {
+          "id": "D21",
+          "score": 5.80706
+        },
+        {
+          "id": "D10",
+          "score": 4.689634
+        }
+      ],
+      "vector": [
+        {
+          "id": "D22",
+          "score": 0.92086107
+        },
+        {
+          "id": "D09",
+          "score": 0.913819
+        },
+        {
+          "id": "D21",
+          "score": 0.88881147
+        }
+      ],
+      "hybrid": [
+        {
+          "id": "D09",
+          "score": 0.032522473
+        },
+        {
+          "id": "D22",
+          "score": 0.03201844
+        },
+        {
+          "id": "D21",
+          "score": 0.032002047
+        }
+      ]
+    },
+    "Q5": {
+      "keyword": [
+        {
+          "id": "D11",
+          "score": 9.197636
+        },
+        {
+          "id": "D12",
+          "score": 5.8840256
+        },
+        {
+          "id": "D06",
+          "score": 1.5635885
+        }
+      ],
+      "vector": [
+        {
+          "id": "D11",
+          "score": 0.9206512
+        },
+        {
+          "id": "D12",
+          "score": 0.8835623
+        },
+        {
+          "id": "D20",
+          "score": 0.6739404
+        }
+      ],
+      "hybrid": [
+        {
+          "id": "D11",
+          "score": 0.032786883
+        },
+        {
+          "id": "D12",
+          "score": 0.032258064
+        },
+        {
+          "id": "D06",
+          "score": 0.031498015
+        }
+      ]
+    },
+    "Q6": {
+      "keyword": [
+        {
+          "id": "D14",
+          "score": 11.741617
+        },
+        {
+          "id": "D13",
+          "score": 10.322301
+        },
+        {
+          "id": "D28",
+          "score": 1.7590457
+        }
+      ],
+      "vector": [
+        {
+          "id": "D14",
+          "score": 0.89754534
+        },
+        {
+          "id": "D13",
+          "score": 0.8740349
+        },
+        {
+          "id": "D08",
+          "score": 0.652836
+        }
+      ],
+      "hybrid": [
+        {
+          "id": "D14",
+          "score": 0.032786883
+        },
+        {
+          "id": "D13",
+          "score": 0.032258064
+        },
+        {
+          "id": "D28",
+          "score": 0.031024532
+        }
+      ]
+    }
+  }
+}
