@@ -310,7 +310,7 @@ function improveContent(){
     </section>
     <section class="improve-case">
       <div class="improve-case-head"><span class="stage-number">2</span><div><h3 id="improve-q2" tabindex="-1">Vegetarian chicken rice · rerank with Jina</h3><p>The user wants chicken-rice-style instructions <b>without chicken</b>. Hybrid finds the tofu-based D16 at #2, but ranks chicken recipe D01 first.</p></div></div>
-      <div class="improve-check"><b>Why Jina here?</b><span><b>Problem:</b> Hybrid RRF combines keyword and vector rankings. It already retrieves tofu recipe D16 at #2, so this is an ordering problem. The words “chicken rice” can favor D01 despite the request “without chicken.”<br><b>Test:</b> Elasticsearch passes Hybrid’s top 10 candidates to <code>text_similarity_reranker</code>. <code>.jina-reranker-v3.5</code> scores each candidate’s <code>content</code> against the unchanged full query and reorders them; it does not add or filter documents.<br><b>Observed:</b> D16 moves #2 → #1, while chicken recipe D01 moves #1 → #2.</span></div>
+      <div class="improve-check"><b>How B uses Jina</b><span>Elasticsearch sends Hybrid’s top 10 results to <code>.jina-reranker-v3.5</code>. It compares each result’s <code>content</code> with the full search query and reorders them. The vegetarian recipe D16 moves from #2 to #1.</span></div>
       ${jinaProbeComparison()}
       <p class="result-legend">RR@3 ${fmt(probeBefore.rr)} → ${fmt(probeAfter.rr)}; NDCG@3 ${fmt(probeBefore.ndcg)} → ${fmt(probeAfter.ndcg)}. Precision@3 and Recall@3 tie because the same three documents remain visible. This is one promising task, not proof that Jina improves every query.</p>
       ${improveScoreNote(probeId,saved[probeId].hybrid.hits,saved[probeId].jinaRerank.hits)}
