@@ -316,6 +316,9 @@ textarea { display: block; width: 100%; min-height: 170px; resize: vertical; fon
 .improve-lanes .ab-result.rank-up { border-left: 5px solid #12805D; }
 .improve-lanes .ab-result.rank-down { border-left: 5px solid #B77500; }
 .improve-lanes .ab-result p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.improve-score-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0 0; }
+.improve-score-notes > div { display: grid; align-content: start; gap: 4px; border: 1px solid var(--line); border-radius: 6px; background: #F7FAFF; padding: 9px 11px; font-size: 12px; line-height: 1.5; }
+.improve-score-notes b { color: var(--midnight); }
 .improve-lanes .response-entry { margin: 9px 0 4px; }
 .improve-lanes .response-feedback { margin-bottom: 0; }
 .improve-lane-title { color: var(--midnight); font-size: 13px; font-weight: 800; }
@@ -504,6 +507,7 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
   .section-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 650px) {
+  .improve-score-notes { grid-template-columns: 1fr; }
   .expert-review-roles { grid-template-columns: 1fr; }
   .expert-review-heading { flex-wrap: wrap; gap: 3px 8px; }
   .viral-story { align-items: stretch; flex-direction: column; }
