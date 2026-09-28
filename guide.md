@@ -1,4 +1,4 @@
-# Elasticsearch Serverless Vector Search Workshop
+# Elasticsearch Search Evaluation Workshop
 
 This static workshop uses **28 fictional Singapore food documents** and fixed rankings captured from an Elasticsearch Serverless project. It needs no API key in the browser. The learning order is **search methods → offline evaluation → offline improvement → Relevance Studio → online signal → improvement again**.
 

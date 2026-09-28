@@ -1,4 +1,4 @@
-# Elasticsearch Vector Search Workshop
+# Elasticsearch Search Evaluation Workshop
 
 [Open the workshop](https://2gavy.github.io/evals/)
 
