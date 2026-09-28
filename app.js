@@ -58,7 +58,7 @@ function abWorkbench(phase){
 }
 function methodPreview(mode){
   const methods=mode==='keyword'?['keyword']:mode==='vector'?['keyword','vector']:['vector','hybrid'];
-  return `<div class="method-preview ${methods.length===1?'single':''}" id="method-preview" data-mode="${mode}"><div class="method-preview-head"><b>Results for ${esc(queryId)}</b><span>Captured Elasticsearch results · metrics use the workshop relevance grades</span></div><div class="ab-lanes">${methods.map(method=>`<section class="ab-lane"><div class="method-lane-title">${esc(abModes[method])}</div><div data-preview-method="${method}"><p class="muted">Loading captured results…</p></div></section>`).join('')}</div><p class="result-legend"><b>Guide</b> is the document type (instructions); <b>Current</b> is its status (active, not archived). Relevance grades: <b>0</b> irrelevant, <b>1</b> related, <b>2</b> partly useful, <b>3</b> direct answer.</p></div>`
+  return `<div class="method-preview ${methods.length===1?'single':''}" id="method-preview" data-mode="${mode}"><div class="method-preview-head"><b>Results for ${esc(queryId)}</b><span>Captured Elasticsearch results · metrics use the workshop relevance grades</span></div><div class="ab-lanes">${methods.map(method=>`<section class="ab-lane"><div class="method-lane-title">${esc(abModes[method])}</div><div data-preview-method="${method}"><p class="muted">Loading captured results…</p></div></section>`).join('')}</div>${methods.length>1?'<p class="result-legend"><b>Right-side borders:</b> <span class="legend-up">green = moved up</span> · <span class="legend-down">amber = moved down</span> · <span class="legend-new">blue = entered top 3</span> · gray = same rank. Green card fill marks a direct answer. Right-side metric borders show improvement, decline or a tie.</p>':''}<p class="result-legend"><b>Guide</b> is the document type (instructions); <b>Current</b> is its status (active, not archived). Relevance grades: <b>0</b> irrelevant, <b>1</b> related, <b>2</b> partly useful, <b>3</b> direct answer.</p></div>`
 }
 async function renderMethodPreview(){
   const root=$('#method-preview');if(!root)return;
@@ -66,7 +66,8 @@ async function renderMethodPreview(){
   try{
     await loadAbSnapshot();
     if(root!==$('#method-preview')||qid!==queryId)return;
-    root.querySelectorAll('[data-preview-method]').forEach(lane=>{lane.innerHTML=abLane('',lane.dataset.previewMethod,qid,'lesson')});
+    const baseline=root.dataset.mode==='vector'?'keyword':root.dataset.mode==='hybrid'?'vector':null;
+    root.querySelectorAll('[data-preview-method]').forEach(lane=>{const method=lane.dataset.previewMethod;lane.innerHTML=abLane('',method,qid,'lesson',baseline&&method!==baseline?baseline:null)});
   }catch(error){if(root===$('#method-preview'))root.innerHTML=callout('Captured example unavailable',esc(error.message),true)}
 }
 function idealDocumentIds(qid){
@@ -74,22 +75,38 @@ function idealDocumentIds(qid){
   const best=Math.max(0,...judgments.map(([,value])=>Number(value)));
   return best>=2?judgments.filter(([,value])=>Number(value)===best).map(([id])=>id):[]
 }
-function abResultCard(hit,rank,qid,showGrade,highlightIdeal=false){
+function abResultCard(hit,rank,qid,showGrade,highlightIdeal=false,previousHits=null){
   const d=doc(hit.id),rating=grade(qid,hit.id);
   const ideal=highlightIdeal&&idealDocumentIds(qid).includes(hit.id);
+  const prior=previousHits?.findIndex(other=>other.id===hit.id)??-1;
+  const movement=previousHits?(prior<0?'new':rank<prior+1?'up':rank>prior+1?'down':'same'):'';
+  const movementText=movement==='new'?'New in top 3':movement==='up'?`↑ from #${prior+1}`:movement==='down'?`↓ from #${prior+1}`:'';
   const type={guide:'Guide',recipe:'Recipe',reference:'Reference',menu:'Menu'}[d?.category]??'Document';
   const version=d?.status==='archived'?'Archived':'Current';
-  return `<article class="ab-result ${ideal?'ideal-result':''}"><div class="ab-result-top"><span class="ab-rank">#${rank} · ${esc(hit.id)}</span><span class="ab-type">${type} · ${version}</span></div><h3>${esc(d?.title??'Unknown document')}</h3>${ideal?`<span class="ideal-badge">${rank===1?'Ideal answer · already #1':'Ideal answer · move up'}</span>`:''}<p>${esc(d?.content??'')}</p><div class="ab-result-foot"><span>Elasticsearch rank score ${hit.score==null?'—':esc(Number(hit.score).toFixed(3))}</span>${showGrade?`<strong>Relevance grade ${rating}/3</strong>`:''}</div></article>`
+  return `<article class="ab-result ${ideal?'ideal-result':''} ${movement?'rank-'+movement:''}"><div class="ab-result-top"><span class="ab-rank">#${rank} · ${esc(hit.id)}</span><span class="ab-type">${type} · ${version}</span></div><h3>${esc(d?.title??'Unknown document')}</h3>${movementText?`<span class="movement-badge">${movementText}</span>`:''}${ideal?`<span class="ideal-badge">${rank===1?'Ideal answer · already #1':'Ideal answer · move up'}</span>`:''}<p>${esc(d?.content??'')}</p><div class="ab-result-foot"><span>Elasticsearch rank score ${hit.score==null?'—':esc(Number(hit.score).toFixed(3))}</span>${showGrade?`<strong>Relevance grade ${rating}/3</strong>`:''}</div></article>`
 }
-function abLane(arm,mode,qid,phase){
+function abLane(arm,mode,qid,phase,compareToMode=null){
   const hits=abSnapshot.results[qid][mode],m=metric(hits.map(h=>h.id),qid);
   const showScores=phase==='online'||phase==='lesson'||phase==='evaluate';
-  const focusRanking=phase==='lesson'&&(step===5||step===6)&&qid==='Q1';
-  const metrics=showScores?`<div class="ab-metric-label">Offline quality scores · top 3</div><div class="ab-metrics"><span>Precision@3 <b>${fmt(m.precision)}</b></span><span>Recall@3 <b>${fmt(m.recall)}</b></span><span class="${focusRanking?'rank-focus':''}">RR@3 <b>${fmt(m.rr)}</b></span><span class="${focusRanking?'rank-focus':''}">NDCG@3 <b>${fmt(m.ndcg)}</b></span></div>`:'';
-  return `<div class="ab-count">${hits.length} returned result${hits.length===1?'':'s'} · ${esc(abModes[mode])}</div><div class="ab-cards">${hits.length?hits.map((hit,i)=>abResultCard(hit,i+1,qid,showScores,phase==='online'||phase==='evaluate'||step===0||focusRanking)).join(''):'<p class="muted">No results returned.</p>'}</div>${metrics}`
+  const previousHits=compareToMode?abSnapshot.results[qid][compareToMode]:null;
+  const previous=previousHits?metric(previousHits.map(h=>h.id),qid):null;
+  const metricTile=(label,key)=>{const change=previous?m[key]>previous[key]+1e-9?'better':m[key]<previous[key]-1e-9?'worse':'tied':'';return `<span class="${change?'metric-'+change:''}">${label} <b>${fmt(m[key])}</b></span>`};
+  const metrics=showScores?`<div class="ab-metric-label">Offline quality scores · top 3</div><div class="ab-metrics">${metricTile('Precision@3','precision')}${metricTile('Recall@3','recall')}${metricTile('RR@3','rr')}${metricTile('NDCG@3','ndcg')}</div>`:'';
+  const highlightIdeal=phase==='online'||phase==='evaluate'||step===0||phase==='lesson'&&(step===5||step===6);
+  return `<div class="ab-count">${hits.length} returned result${hits.length===1?'':'s'} · ${esc(abModes[mode])}</div><div class="ab-cards">${hits.length?hits.map((hit,i)=>abResultCard(hit,i+1,qid,showScores,highlightIdeal,previousHits)).join(''):'<p class="muted">No results returned.</p>'}</div>${metrics}`
+}
+function comparisonTakeaway(qid,beforeMode,afterMode){
+  const before=abSnapshot.results[qid][beforeMode],after=abSnapshot.results[qid][afterMode];
+  const rank=(hits,id)=>{const i=hits.findIndex(hit=>hit.id===id);return i<0?'outside top 3':`#${i+1}`};
+  const useful=Object.entries(labels[qid]).filter(([,value])=>Number(value)>=2).map(([id])=>id);
+  const moved=useful.filter(id=>rank(before,id)!==rank(after,id)).map(id=>`${id} ${rank(before,id)} → ${rank(after,id)}`);
+  const a=metric(before.map(hit=>hit.id),qid),b=metric(after.map(hit=>hit.id),qid);
+  const names={precision:'Precision@3',recall:'Recall@3',rr:'RR@3',ndcg:'NDCG@3'};
+  const changed=Object.entries(names).filter(([key])=>Math.abs((a[key]??0)-(b[key]??0))>1e-9).map(([key,name])=>`${name} ${fmt(a[key])} → ${fmt(b[key])}`);
+  return `<b>Useful results:</b> ${moved.length?esc(moved.join('; ')):'same visible ranks'}. <b>Offline metrics:</b> ${changed.length?esc(changed.join('; ')):'all four tie'}.`;
 }
 function abLesson(qid){return {
-  Q1:step===5?'Follow the green D01 recipe: <b>BM25 #3 → vector #1</b>. The outlined ranking metrics show <b>RR@3 0.333 → 1.000</b> and <b>NDCG@3 0.294 → 0.587</b>. Precision@3 (0.333) and Recall@3 (0.500) stay the same: both methods found D01, but vector ranked it first. This is the result for Q1; compare the other questions before choosing a method.':step===6?'Follow the green D01 recipe: <b>semantic #1 → hybrid #1</b>. The outlined RR@3 (1.000) and NDCG@3 (0.587) are <b>unchanged</b>; Precision@3 (0.333) and Recall@3 (0.500) also tie. Fusion only swaps the two irrelevant search-tag pages for Q1. Across this captured six-query set, hybrid does not improve the offline metrics over semantic search; test a broader query set before choosing it.':'Look for the usable chicken rice recipe D01. Does changing the search method move it closer to the top?',
+  Q1:'The green D01 card is the usable recipe. Compare its rank; moving irrelevant pages without moving D01 does not improve this task.',
   Q2:'“Brinjal” and “eggplant” describe the same food. Check whether each method returns only the keyword page D19 or also finds useful recipes D04 and D20. Even a method that finds them may still rank D19 first.',
   Q3:'D06 is the mee goreng recipe. Check whether each method ranks the usable cooking steps above incidental noodle mentions.',
   Q4:'This task needs the exact RC-123 model. Compare D09 and D22 with the wrong-model documents; meaning alone is not a substitute for checking identifiers.',
@@ -374,7 +391,9 @@ function compactSearchPanels(html){
   const label=step===4?'Keyword · BM25':step===5?'Vector · semantic':'Hybrid · RRF';
   const captured=abSnapshot?.results?.[queryId]?.[step===4?'keyword':step===5?'vector':'hybrid'];
   const calculation=captured?`<details class="calculation-disclosure"><summary>Show the calculation for ${esc(queryId)}</summary>${metricBreakdown(captured.map(hit=>hit.id),queryId)}</details>`:'';
-  return panel(label,`<div class="search-workflow"><section class="search-stage search-run"><h3><span class="stage-number">1</span> See the search request</h3>${request.innerHTML}${optional}</section><section class="search-stage search-inspect"><h3><span class="stage-number">2</span> Inspect the captured results and scores</h3>${preview.outerHTML}${callout('Look for',abLesson(queryId))}${calculation}</section></div>`,'accent')
+  const beforeMode=step===5?'keyword':step===6?'vector':null,afterMode=step===5?'vector':step===6?'hybrid':null;
+  const takeaway=beforeMode?`${comparisonTakeaway(queryId,beforeMode,afterMode)}<br>${abLesson(queryId)}`:abLesson(queryId);
+  return panel(label,`<div class="search-workflow"><section class="search-stage search-run"><h3><span class="stage-number">1</span> See the search request</h3>${request.innerHTML}${optional}</section><section class="search-stage search-inspect"><h3><span class="stage-number">2</span> Inspect the captured results and scores</h3>${preview.outerHTML}${callout('Look for',takeaway)}${calculation}</section></div>`,'accent')
 }
 function content(){
   if(step===7)return evaluateContent();
