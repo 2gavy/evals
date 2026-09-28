@@ -154,6 +154,141 @@
           "score": 0.031024532
         }
       ]
+    },
+    "offlineRerank": {
+      "capturedAt": "2026-09-28T14:41:30.135487+00:00",
+      "endpoint": ".jina-reranker-v3.5",
+      "field": "content",
+      "rankWindowSize": 10,
+      "queryTexts": {
+        "Q1": "Hainanese chicken rice how to cook chicken poach time",
+        "Q2": "brinjal",
+        "Q3": "mee goreng noodles recipe",
+        "Q4": "RC-123 rice cooker instructions",
+        "Q5": "peanut-free satay sauce",
+        "Q6": "current Rasa Corner lunch menu"
+      },
+      "results": {
+        "Q1": [
+          {
+            "id": "D01",
+            "score": 1.6214037
+          },
+          {
+            "id": "D02",
+            "score": 1.385481
+          },
+          {
+            "id": "D18",
+            "score": 1.3603027
+          }
+        ],
+        "Q2": [
+          {
+            "id": "D19",
+            "score": 1.4786263
+          },
+          {
+            "id": "D12",
+            "score": 0.97564155
+          },
+          {
+            "id": "D04",
+            "score": 0.94767743
+          }
+        ],
+        "Q3": [
+          {
+            "id": "D06",
+            "score": 1.6815827
+          },
+          {
+            "id": "D17",
+            "score": 0.9574497
+          },
+          {
+            "id": "D16",
+            "score": 0.95653135
+          }
+        ],
+        "Q4": [
+          {
+            "id": "D09",
+            "score": 1.7140479
+          },
+          {
+            "id": "D22",
+            "score": 1.6223896
+          },
+          {
+            "id": "D21",
+            "score": 1.4760494
+          }
+        ],
+        "Q5": [
+          {
+            "id": "D11",
+            "score": 1.7403125
+          },
+          {
+            "id": "D12",
+            "score": 1.5188122
+          },
+          {
+            "id": "D17",
+            "score": 0.94036174
+          }
+        ],
+        "Q6": [
+          {
+            "id": "D14",
+            "score": 1.7535028
+          },
+          {
+            "id": "D13",
+            "score": 1.5242586
+          },
+          {
+            "id": "D12",
+            "score": 0.99909705
+          }
+        ]
+      }
+    },
+    "rerankProbe": {
+      "capturedAt": "2026-09-28T14:41:29.901200+00:00",
+      "queryText": "vegetarian chicken rice recipe without chicken",
+      "endpoint": ".jina-reranker-v3.5",
+      "field": "content",
+      "rankWindowSize": 10,
+      "hybrid": [
+        {
+          "id": "D01",
+          "score": 0.032522473
+        },
+        {
+          "id": "D16",
+          "score": 0.032522473
+        },
+        {
+          "id": "D03",
+          "score": 0.031257633
+        }
+      ],
+      "jinaRerank": [
+        {
+          "id": "D16",
+          "score": 1.7507851
+        },
+        {
+          "id": "D01",
+          "score": 1.0839359
+        },
+        {
+          "id": "D03",
+          "score": 1.0432681
+        }
+      ]
     }
   }
 }

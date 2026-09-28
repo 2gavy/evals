@@ -321,6 +321,17 @@
       }
     }
   ],
+  "rerankProbe": {
+    "id": "vegetarian-probe",
+    "text": "vegetarian chicken rice recipe without chicken",
+    "task": "Find chicken-rice-style cooking instructions that use no chicken.",
+    "labels": {
+      "D16": 3,
+      "D01": 0,
+      "D03": 0,
+      "D17": 0
+    }
+  },
   "viralQuery": {
     "id": "viral",
     "text": "kaya toast recipe",
