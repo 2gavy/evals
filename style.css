@@ -231,16 +231,14 @@ textarea { display: block; width: 100%; min-height: 170px; resize: vertical; fon
 .ab-metrics span { display: grid; gap: 1px; background: #E7F0FF; border-radius: 4px; padding: 5px; color: var(--midnight); font-size: 10px; }
 .ab-metrics span.metric-better { outline: 2px solid #12805D; outline-offset: -2px; background: #E2F7ED; }
 .ab-metrics span.metric-worse { outline: 2px solid #B77500; outline-offset: -2px; background: #FFF0D0; }
-.ab-metrics span.metric-tied { outline: 2px solid #8490A5; outline-offset: -2px; background: #F0F3F7; }
 .ab-metrics b { font-size: 14px; font-variant-numeric: tabular-nums; }
 .ab-cards { display: grid; gap: 7px; }
 .ab-result { border: 1px solid var(--line); border-left: 3px solid var(--blue); border-radius: 6px; background: #fff; padding: 10px 11px; }
 .ab-result.ideal-result { border-color: #54BC9B; border-left: 5px solid #12805D; background: #EFFBF5; }
+.method-preview .ab-result { border-left-color: #B8C3D4; }
 .method-preview .ab-result.rank-up { border-left: 5px solid #12805D; }
 .method-preview .ab-result.rank-down { border-left: 5px solid #B77500; }
 .method-preview .ab-result.rank-new { border-left: 5px solid var(--blue); }
-.method-preview .ab-result.rank-same { border-left: 5px solid #8490A5; }
-.method-preview .ab-lane:nth-child(2) { border-color: #8EB5F0; }
 .movement-badge { display: inline-block; margin: 0 5px 5px 0; padding: 2px 6px; border-radius: 4px; background: #EDF2FB; color: var(--midnight); font-size: 10px; font-weight: 850; }
 .legend-up { color: #116A4B; font-weight: 800; }
 .legend-down { color: #935F00; font-weight: 800; }

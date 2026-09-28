@@ -58,7 +58,7 @@ function abWorkbench(phase){
 }
 function methodPreview(mode){
   const methods=mode==='keyword'?['keyword']:mode==='vector'?['keyword','vector']:['vector','hybrid'];
-  return `<div class="method-preview ${methods.length===1?'single':''}" id="method-preview" data-mode="${mode}"><div class="method-preview-head"><b>Results for ${esc(queryId)}</b><span>Captured Elasticsearch results · the answer key behind the metrics is explained in 08 Evaluate</span></div><div class="ab-lanes">${methods.map(method=>`<section class="ab-lane"><div class="method-lane-title">${esc(abModes[method])}</div><div data-preview-method="${method}"><p class="muted">Loading captured results…</p></div></section>`).join('')}</div>${methods.length>1?'<p class="result-legend"><b>Right-side borders:</b> <span class="legend-up">green = moved up</span> · <span class="legend-down">amber = moved down</span> · <span class="legend-new">blue = entered top 3</span> · gray = same rank. Green card fill marks a direct answer. Right-side metric borders show improvement, decline or a tie.</p>':''}<p class="result-legend"><b>Guide</b> is the document type (instructions); <b>Current</b> is its status (active, not archived). Numeric relevance grades start in <b>08 Evaluate</b>.</p></div>`
+  return `<div class="method-preview ${methods.length===1?'single':''}" id="method-preview" data-mode="${mode}"><div class="method-preview-head"><b>Results for ${esc(queryId)}</b><span>Captured Elasticsearch results · the answer key behind the metrics is explained in 08 Evaluate</span></div><div class="ab-lanes">${methods.map(method=>`<section class="ab-lane"><div class="method-lane-title">${esc(abModes[method])}</div><div data-preview-method="${method}"><p class="muted">Loading captured results…</p></div></section>`).join('')}</div>${methods.length>1?'<p class="result-legend"><b>Only changes are coloured on the right:</b> <span class="legend-up">green = moved up</span> · <span class="legend-down">amber = moved down</span> · <span class="legend-new">blue = entered top 3</span>. A coloured metric border means its value changed; unchanged results and metrics stay neutral.</p>':''}<p class="result-legend"><b>Guide</b> is the document type (instructions); <b>Current</b> is its status (active, not archived). Numeric relevance grades start in <b>08 Evaluate</b>.</p></div>`
 }
 async function renderMethodPreview(){
   const root=$('#method-preview');if(!root)return;
@@ -79,7 +79,7 @@ function abResultCard(hit,rank,qid,showGrade,highlightIdeal=false,previousHits=n
   const d=doc(hit.id),rating=grade(qid,hit.id);
   const ideal=highlightIdeal&&idealDocumentIds(qid).includes(hit.id);
   const prior=previousHits?.findIndex(other=>other.id===hit.id)??-1;
-  const movement=previousHits?(prior<0?'new':rank<prior+1?'up':rank>prior+1?'down':'same'):'';
+  const movement=previousHits?(prior<0?'new':rank<prior+1?'up':rank>prior+1?'down':''):'';
   const movementText=movement==='new'?'New in top 3':movement==='up'?`↑ from #${prior+1}`:movement==='down'?`↓ from #${prior+1}`:'';
   const type={guide:'Guide',recipe:'Recipe',reference:'Reference',menu:'Menu'}[d?.category]??'Document';
   const version=d?.status==='archived'?'Archived':'Current';
@@ -90,9 +90,9 @@ function abLane(arm,mode,qid,phase,compareToMode=null){
   const showScores=phase==='online'||phase==='lesson'||phase==='evaluate';
   const previousHits=compareToMode?abSnapshot.results[qid][compareToMode]:null;
   const previous=previousHits?metric(previousHits.map(h=>h.id),qid):null;
-  const metricTile=(label,key)=>{const change=previous?m[key]>previous[key]+1e-9?'better':m[key]<previous[key]-1e-9?'worse':'tied':'';return `<span class="${change?'metric-'+change:''}">${label} <b>${fmt(m[key])}</b></span>`};
+  const metricTile=(label,key)=>{const change=previous?m[key]>previous[key]+1e-9?'better':m[key]<previous[key]-1e-9?'worse':'':'';return `<span class="${change?'metric-'+change:''}">${label} <b>${fmt(m[key])}</b></span>`};
   const metrics=showScores?`<div class="ab-metric-label">Offline quality scores · top 3</div><div class="ab-metrics">${metricTile('Precision@3','precision')}${metricTile('Recall@3','recall')}${metricTile('RR@3','rr')}${metricTile('NDCG@3','ndcg')}</div>`:'';
-  const highlightIdeal=phase==='online'||phase==='evaluate'||step===0||phase==='lesson'&&(step===5||step===6);
+  const highlightIdeal=phase==='online'||phase==='evaluate'||step===0;
   const showGrades=phase==='online'||phase==='evaluate';
   return `<div class="ab-count">${hits.length} returned result${hits.length===1?'':'s'} · ${esc(abModes[mode])}</div><div class="ab-cards">${hits.length?hits.map((hit,i)=>abResultCard(hit,i+1,qid,showGrades,highlightIdeal,previousHits)).join(''):'<p class="muted">No results returned.</p>'}</div>${metrics}`
 }
@@ -107,7 +107,7 @@ function comparisonTakeaway(qid,beforeMode,afterMode){
   return `<b>Useful results:</b> ${moved.length?esc(moved.join('; ')):'same visible ranks'}. <b>Offline metrics:</b> ${changed.length?esc(changed.join('; ')):'all four tie'}.`;
 }
 function abLesson(qid){return {
-  Q1:'The green D01 card is the usable recipe. Compare its rank; moving irrelevant pages without moving D01 does not improve this task.',
+  Q1:'D01 is the usable recipe. Compare its rank; moving irrelevant pages without moving D01 does not improve this task.',
   Q2:'“Brinjal” and “eggplant” describe the same food. Check whether each method returns only the keyword page D19 or also finds useful recipes D04 and D20. Even a method that finds them may still rank D19 first.',
   Q3:'D06 is the mee goreng recipe. Check whether each method ranks the usable cooking steps above incidental noodle mentions.',
   Q4:'This task needs the exact RC-123 model. Compare D09 and D22 with the wrong-model documents; meaning alone is not a substitute for checking identifiers.',
