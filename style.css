@@ -297,6 +297,7 @@ textarea { display: block; width: 100%; min-height: 170px; resize: vertical; fon
 .improve-case, .studio-phase, .online-phase { border-top: 1px solid var(--line); padding-top: 17px; margin-top: 19px; }
 .improve-case-head { display: flex; align-items: flex-start; gap: 9px; }
 .improve-case-head h3, .studio-phase > h3, .online-phase > h3 { margin: 0 0 4px; color: var(--midnight); font-size: 17px; }
+.improve-case-head h3[id] { scroll-margin-top: 100px; }
 .improve-case-head p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
 .improve-check { display: flex; align-items: baseline; flex-wrap: wrap; gap: 5px 8px; border-left: 3px solid #02BCB7; background: #F0FBF8; border-radius: 0 5px 5px 0; padding: 7px 10px; margin: 10px 0; font-size: 12px; }
 .improve-check b { color: var(--midnight); }
