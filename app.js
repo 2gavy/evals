@@ -84,11 +84,12 @@ function abResultCard(hit,rank,qid,showGrade,highlightIdeal=false){
 function abLane(arm,mode,qid,phase){
   const hits=abSnapshot.results[qid][mode],m=metric(hits.map(h=>h.id),qid);
   const showScores=phase==='online'||phase==='lesson'||phase==='evaluate';
-  const metrics=showScores?`<div class="ab-metric-label">Offline quality scores · top 3</div><div class="ab-metrics"><span>Precision@3 <b>${fmt(m.precision)}</b></span><span>Recall@3 <b>${fmt(m.recall)}</b></span><span>RR@3 <b>${fmt(m.rr)}</b></span><span>NDCG@3 <b>${fmt(m.ndcg)}</b></span></div>`:'';
-  return `<div class="ab-count">${hits.length} returned result${hits.length===1?'':'s'} · ${esc(abModes[mode])}</div><div class="ab-cards">${hits.length?hits.map((hit,i)=>abResultCard(hit,i+1,qid,showScores,phase==='online'||phase==='evaluate'||step===0)).join(''):'<p class="muted">No results returned.</p>'}</div>${metrics}`
+  const focusRanking=phase==='lesson'&&step===5&&qid==='Q1';
+  const metrics=showScores?`<div class="ab-metric-label">Offline quality scores · top 3</div><div class="ab-metrics"><span>Precision@3 <b>${fmt(m.precision)}</b></span><span>Recall@3 <b>${fmt(m.recall)}</b></span><span class="${focusRanking?'rank-focus':''}">RR@3 <b>${fmt(m.rr)}</b></span><span class="${focusRanking?'rank-focus':''}">NDCG@3 <b>${fmt(m.ndcg)}</b></span></div>`:'';
+  return `<div class="ab-count">${hits.length} returned result${hits.length===1?'':'s'} · ${esc(abModes[mode])}</div><div class="ab-cards">${hits.length?hits.map((hit,i)=>abResultCard(hit,i+1,qid,showScores,phase==='online'||phase==='evaluate'||step===0||focusRanking)).join(''):'<p class="muted">No results returned.</p>'}</div>${metrics}`
 }
 function abLesson(qid){return {
-  Q1:'Look for the usable chicken rice recipe D01. Does changing the search method move it closer to the top?',
+  Q1:step===5?'Follow the green D01 recipe: <b>BM25 #3 → vector #1</b>. The outlined ranking metrics show <b>RR@3 0.333 → 1.000</b> and <b>NDCG@3 0.294 → 0.587</b>. Precision@3 (0.333) and Recall@3 (0.500) stay the same: both methods found D01, but vector ranked it first. This is the result for Q1; compare the other questions before choosing a method.':'Look for the usable chicken rice recipe D01. Does changing the search method move it closer to the top?',
   Q2:'“Brinjal” and “eggplant” describe the same food. Check whether each method returns only the keyword page D19 or also finds useful recipes D04 and D20. Even a method that finds them may still rank D19 first.',
   Q3:'D06 is the mee goreng recipe. Check whether each method ranks the usable cooking steps above incidental noodle mentions.',
   Q4:'This task needs the exact RC-123 model. Compare D09 and D22 with the wrong-model documents; meaning alone is not a substitute for checking identifiers.',

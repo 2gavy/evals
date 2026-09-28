@@ -229,6 +229,7 @@ textarea { display: block; width: 100%; min-height: 170px; resize: vertical; fon
 .ab-metric-label { margin: 8px 0 4px; color: var(--midnight); font-size: 10px; font-weight: 800; }
 .ab-metrics { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; margin-bottom: 9px; }
 .ab-metrics span { display: grid; gap: 1px; background: #E7F0FF; border-radius: 4px; padding: 5px; color: var(--midnight); font-size: 10px; }
+.ab-metrics span.rank-focus { outline: 2px solid var(--blue); outline-offset: -2px; background: #D9E9FF; }
 .ab-metrics b { font-size: 14px; font-variant-numeric: tabular-nums; }
 .ab-cards { display: grid; gap: 7px; }
 .ab-result { border: 1px solid var(--line); border-left: 3px solid var(--blue); border-radius: 6px; background: #fff; padding: 10px 11px; }
