@@ -312,6 +312,8 @@ textarea { display: block; width: 100%; min-height: 170px; resize: vertical; fon
 .improve-lanes .ab-lane { padding: 10px; }
 .improve-lanes .ab-cards { gap: 5px; }
 .improve-lanes .ab-result { padding: 8px; }
+.improve-lanes .ab-result.rank-up { border-left: 5px solid #12805D; }
+.improve-lanes .ab-result.rank-down { border-left: 5px solid #B77500; }
 .improve-lanes .ab-result p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
 .improve-lanes .response-entry { margin: 9px 0 4px; }
 .improve-lanes .response-feedback { margin-bottom: 0; }
