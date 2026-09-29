@@ -689,3 +689,16 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .behavior-journey b { font-size:13px; }
 .behavior-journey small { font-size:12px; color:#52617a; }
 @media(max-width:580px) { .behavior-journey { gap:5px; } .behavior-journey b { font-size:11px; } }
+
+.shopping-paths { list-style:none; margin:0; padding:10px 12px; display:grid; gap:8px; }
+.shopping-paths>li { padding:12px; border:1px solid #c8dfd8; border-radius:6px; background:white; }
+.shopping-person { display:flex; align-items:center; gap:7px; font-size:12px; margin-bottom:6px; }
+.shopping-person>small { margin-left:auto; color:#52617a; font-size:10px; }
+.shopping-paths>li>strong { font-size:13px; color:#12357b; }
+.shopping-track { display:flex; align-items:center; gap:5px; margin-top:10px; }
+.shopping-milestone { flex:1; display:grid; gap:3px; text-align:center; padding:7px 3px; border:1px solid #b5d9ce; border-radius:5px; background:#eaf8f2; color:#006b59; }
+.shopping-milestone b { font-size:11px; }
+.shopping-milestone small { font-size:10px; }
+.shopping-milestone.is-unreached { border-style:dashed; border-color:#ccd3df; background:#f5f6f8; color:#697487; }
+.shopping-track-arrow { color:#7a8b99; font-size:12px; }
+.shopping-paths .shopping-stop { margin:7px 0 0; font-size:11px; font-weight:600; color:#405373; }
