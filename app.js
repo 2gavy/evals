@@ -449,10 +449,10 @@ function compactSearchPanels(html){
 }
 function moreContent(){
   const scenarios=[
-    ['Permissions / RBAC','“Customer contract” · Support role',
-      [['Customer contract','Restricted · exposed'],['Support guide','Allowed']],
-      [['Support guide','Allowed'],['Contract access request','Allowed']],
-      'Enforce access on every result, snippet and answer.'],
+    ['Permissions / RBAC','“What discount does this customer get?” · Support role',
+      [['Retrieved context','Restricted contract reaches the model'],['Generated answer: “30% discount.”','Leaks confidential contract terms']],
+      [['Retrieved context','Restricted contract excluded'],['Generated answer: “Ask the account owner.”','Uses the approved support guide']],
+      'Filter by user permissions before generation. A factual answer can still leak restricted information.'],
     ['Query fan-out','“Vegetarian dinner + where to buy ingredients”',
       [['Tofu rice recipe','Recipe found'],['Where to buy tofu?','Missing']],
       [['Tofu rice recipe','Recipe search'],['Tofu · nearby grocery','Store search']],
