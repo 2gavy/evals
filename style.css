@@ -587,3 +587,5 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .studio-benchmark-image img { display:block; width:100%; height:auto; border:1px solid var(--line); border-radius:7px; }
 .studio-benchmark-highlight { position:absolute; left:6.8%; top:42.5%; width:89.4%; height:5.7%; border:3px solid #008F83; border-radius:4px; box-sizing:border-box; pointer-events:none; }
 .studio-benchmark-evidence figcaption { margin-top:7px; color:var(--muted); font-size:11px; }
+
+.online-search-problem .online-metric-cards { grid-template-columns: repeat(2,minmax(0,1fr)); }
