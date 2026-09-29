@@ -408,7 +408,7 @@ textarea { display: block; width: 100%; min-height: 170px; resize: vertical; fon
 .online-compare-lanes { margin: 10px 0 6px; }
 .online-compare-lane { padding: 10px; }
 .online-ranking-snippet { margin: 7px 0; font-size: 11px; color: var(--midnight); }
-.online-ranking-snippet pre { margin: 5px 0; padding: 10px; font-size: 11px; white-space: pre-wrap; overflow-wrap: anywhere; max-height: none; }
+.online-ranking-snippet pre { margin: 5px 0; padding: 10px; font-size: 11px; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 80px; overflow: auto; }
 .online-ranking-snippet small { color: #05645E; font-size: 10px; }
 .online-compare-lane .online-ranks { margin-bottom: 0; }
 .online-compare-lane .online-ranks li { grid-template-columns: 58px minmax(0,1fr) auto; align-items: center; gap: 7px; padding: 5px 7px; }

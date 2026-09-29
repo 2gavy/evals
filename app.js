@@ -378,8 +378,8 @@ function onlineImprovedRankings(){
     const hits=saved.viral[mode].hits;
     const rows=hits.map((hit,i)=>`<li class="${hit.id==='D08'?'online-rank-target':''}"><span>#${i+1} · ${esc(hit.id)}</span><b>${esc(doc(hit.id)?.title??'Unknown')}</b><small>grade ${grade('viral',hit.id)}/3 · score ${fmt(hit.score)}</small></li>`).join('');
     const missing=mode==='hybrid'?`<li class="online-rank-target"><span>#${viralRank} · D08</span><b>Z&amp;V Cafe kaya toast recipe</b><small>grade 3/3 · below the top five</small></li>`:'';
-    const queryChange=mode==='hybridClick'?`<div class="online-ranking-snippet"><b>B adds this scoring script</b><pre><code>${esc(JSON.stringify({script:{source:"Math.sqrt(doc['click_count'].value * params.factor)",params:{factor:0.05}}},null,2))}</code></pre><small>Applied only to recipes whose title matches all query terms.</small></div>`:'';
-    return `<section class="ab-lane online-compare-lane"><div class="ab-lane-head"><span class="ab-arm">${arm}</span><div class="improve-lane-title">${title}</div></div>${queryChange}<ol class="online-ranks">${rows}${missing}</ol></section>`;
+    const queryChange=mode==='hybridClick'?`<div class="online-ranking-snippet"><b>B adds this scoring script</b><pre tabindex="0" aria-label="B scoring script, scroll to read"><code>${esc(JSON.stringify({script:{source:"Math.sqrt(doc['click_count'].value * params.factor)",params:{factor:0.05}}},null,2))}</code></pre><small>Applied only to recipes whose title matches all query terms.</small></div>`:'';
+    return `<section class="ab-lane online-compare-lane"><div class="ab-lane-head"><span class="ab-arm">${arm}</span><div class="improve-lane-title">${title}</div></div><ol class="online-ranks">${rows}${missing}</ol>${queryChange}</section>`;
   };
   return `<div class="ab-lanes online-compare-lanes">${lane('A','hybrid','Hybrid RRF · current search')}${lane('B','hybridClick','Hybrid + guarded click rescore')}</div><p class="result-legend">Both lists are captured Elasticsearch runs on the same documents. Compare rank and relevance grade; the raw scores use different ranking calculations.</p>`;
 }
