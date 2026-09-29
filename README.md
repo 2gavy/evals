@@ -6,7 +6,7 @@ A self-contained, Singapore food-themed workshop on keyword, vector, and hybrid 
 
 ## Workshop preview
 
-Start with six judged queries in Relevance Studio and compare keyword, vector and Hybrid RRF. Hybrid and Semantic tie for the highest NDCG in the captured six-query benchmark.
+Start with six judged queries in Relevance Studio and compare Keyword, Semantic, Hybrid RRF, recipe boost and Hybrid + Jina reranker. Hybrid and Semantic tie for the highest NDCG in the captured six-query benchmark.
 
 ### Discover a new online search
 
