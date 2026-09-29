@@ -578,3 +578,6 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .viral-options { display:flex; gap:4px; }
 .viral-options button[aria-pressed="false"] { background:white; color:var(--blue); border:1px solid var(--blue); }
 .viral-options button[aria-pressed="true"] { background:#008F83; border:1px solid #008F83; color:white; }
+
+.online-ranks .online-rank-buried { border-top-color:#D97979; background:#FFF0F0; }
+.online-ranks .online-rank-buried > b, .online-ranks .online-rank-buried > small { color:#963E3E; }

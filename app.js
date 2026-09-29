@@ -343,7 +343,7 @@ function viralBaseline(){
   const q=data.viralQuery;
   const hits=saved.viral.hybrid.hits;
   const rows=hits.map((hit,i)=>`<li><span>#${i+1} · ${esc(hit.id)}</span><b>${esc(doc(hit.id)?.title??'Unknown')}</b><small>grade ${grade('viral',hit.id)}/3</small></li>`).join('');
-  return `<div class="online-baseline"><div class="online-query"><b>New search task · “${esc(q.text)}”</b><span>${esc(q.task)}</span></div><div class="online-rank-head"><b>What Hybrid · RRF returns</b><small>Captured Elasticsearch ranking + reviewed relevance grades</small></div><ol class="online-ranks">${rows}<li class="online-rank-target"><span>#${viralRank} · D08</span><b>Z&amp;V Cafe kaya toast recipe</b><small>grade 3/3 · below the top five</small></li></ol><p class="online-evidence"><b>The gap:</b> the six familiar offline queries scored well, but they did not include this newly popular search. The useful recipe is indexed yet buried at #${viralRank}; none of the visible top five answers the task.</p></div>`;
+  return `<div class="online-baseline"><div class="online-query"><b>New search task · “${esc(q.text)}”</b><span>${esc(q.task)}</span></div><div class="online-rank-head"><b>What Hybrid · RRF returns</b><small>Captured Elasticsearch ranking + reviewed relevance grades</small></div><ol class="online-ranks">${rows}<li class="online-rank-target online-rank-buried"><span>#${viralRank} · D08</span><b>Z&amp;V Cafe kaya toast recipe</b><small>Recipe users are looking for · below the top five</small></li></ol><p class="online-evidence"><b>The gap:</b> the six familiar offline queries scored well, but they did not include this newly popular search. The useful recipe is indexed yet buried at #${viralRank}; none of the visible top five answers the task.</p></div>`;
 }
 function onlineMetrics(){
   const original=data.queries.map(q=>observed(q.id,'hybrid')).filter(Boolean);
@@ -372,7 +372,7 @@ function onlineImprovedRankings(){
   const lane=(arm,mode,title)=>{
     const hits=saved.viral[mode==='hybridClick'&&!viralActive?'hybrid':mode].hits;
     const rows=hits.map((hit,i)=>`<li class="${hit.id==='D08'?'online-rank-target':''}"><span>#${i+1} · ${esc(hit.id)}</span><b>${esc(doc(hit.id)?.title??'Unknown')}</b><small>grade ${grade('viral',hit.id)}/3 · score ${fmt(hit.score)}</small></li>`).join('');
-    const missing=mode==='hybrid'||!viralActive?`<li class="online-rank-target"><span>#${viralRank} · D08</span><b>Z&amp;V Cafe kaya toast recipe</b><small>grade 3/3 · below the top five</small></li>`:'';
+    const missing=mode==='hybrid'||!viralActive?`<li class="online-rank-target online-rank-buried"><span>#${viralRank} · D08</span><b>Z&amp;V Cafe kaya toast recipe</b><small>Recipe users are looking for · below the top five</small></li>`:'';
     const queryChange=mode==='hybridClick'&&viralActive?`<div class="online-ranking-snippet"><b>B adds this scoring script</b><pre tabindex="0" aria-label="B scoring script, scroll to read"><code>${esc(JSON.stringify({script:{source:"Math.sqrt(doc['click_count'].value * params.factor)",params:{factor:0.05}}},null,2))}</code></pre><small>Applied only to recipes whose title matches all query terms.</small></div>`:'';
     return `<section class="ab-lane online-compare-lane"><div class="ab-lane-head"><span class="ab-arm">${arm}</span><div class="improve-lane-title">${title}</div></div><ol class="online-ranks">${rows}${missing}</ol>${queryChange}</section>`;
   };
