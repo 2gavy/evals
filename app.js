@@ -356,7 +356,7 @@ function onlineOutcomeSummary(){
   return `<div class="online-outcome-summary"><b>A/B testing results (simulated)</b><p>A: Hybrid RRF. B: Hybrid + click boost. Both serve the same search task.</p><div class="online-metric-cards"><div><small>Search CTR</small><strong>${rate(A.searchResultClicks,A.searchSessions)} → ${rate(B.searchResultClicks,B.searchSessions)}</strong><span>A → B · simulated</span></div><div><small>Recipe task completed</small><strong>${rate(A.recipeTaskCompletions,A.searchSessions)} → ${rate(B.recipeTaskCompletions,B.searchSessions)}</strong><span>A → B · simulated</span></div></div><p>This previews the worked A/B example in section 2, not a measured lift or an effect calculated from the ranking demo.</p></div>`;
 }
 function rankingDemoAction(){
-  return `<div class="ranking-demo-action"><span><b>A: Hybrid RRF.</b> B: ${viralActive?'Hybrid + viral click boost.':'same ranking, no viral clicks.'}</span><div class="viral-options" role="group" aria-label="Viral scenario"><button type="button" data-viral="false" aria-pressed="${!viralActive}">No viral</button><button type="button" data-viral="true" aria-pressed="${viralActive}">Viral</button></div></div>`;
+  return `<div class="ranking-demo-action"><span><b>A: Hybrid RRF.</b> B: ${viralActive?'Hybrid + viral click boost.':'same ranking, no viral clicks.'}</span><label class="viral-switch"><input id="improve-viral-toggle" type="checkbox" role="switch" aria-label="Viral" aria-describedby="improve-viral-status" ${viralActive?'checked':''}><span><b>Viral</b><small id="improve-viral-status">${viralActive?'On · 500 simulated clicks':'Off · no viral clicks'}</small></span></label></div>`;
 }
 function renderViralStory(){
   const target=$('#viral-results');if(!target)return;
@@ -475,7 +475,7 @@ function wire(){
     button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();jump();}};
   });
   if($('#viral-results'))renderViralStory();
-  document.querySelectorAll('[data-viral]').forEach(button=>button.onclick=()=>{const choice=button.dataset.viral;viralActive=choice==='true';render();document.querySelector(`[data-viral="${choice}"]`).focus({preventScroll:true})});
+  const viralToggle=$('#improve-viral-toggle');if(viralToggle)viralToggle.onchange=()=>{viralActive=viralToggle.checked;render();$('#improve-viral-toggle').focus({preventScroll:true})};
   document.querySelectorAll('[data-copy]').forEach(button=>button.onclick=async()=>{try{await navigator.clipboard.writeText(snippets[button.dataset.copy]);status(button.dataset.copyTarget==='studio'?'Strategy body copied. Paste it into a Relevance Studio strategy.':'Console request copied. Paste it into your project’s Dev Tools.')}catch{status('Clipboard access failed. Select and copy the code block manually.')}});
 }
 function stagePanels(){return Array.from($('#stage').children).filter(element=>element.classList.contains('panel'))}
