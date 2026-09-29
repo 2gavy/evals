@@ -15,7 +15,8 @@ const steps = [
   ['Improve', 'Improve ranking offline', 'Why: Q1 keyword search buries a useful recipe. For vegetarian chicken rice, Hybrid finds the tofu recipe but ranks a chicken recipe above it. Test two ways to fix a found-but-buried answer.'],
   ['Studio', 'Scale offline evaluation with Relevance Studio', 'Why: scenarios, judgments, strategies and benchmarks make the six-query offline comparison repeatable.'],
   ['Online', 'A relevant recipe is buried when demand takes off', 'Why: Hybrid performed well on the original six queries. Online users now search for kaya toast—a task the initial benchmark did not cover.'],
-  ['Improve again', 'Test, gate, and release the ranking change', 'Why: a promising offline score is only the start. Check the new strategy against the full judged set in CI, then test whether it helps real search users before rolling it out.']
+  ['Improve again', 'Test, gate, and release the ranking change', 'Why: a promising offline score is only the start. Check the new strategy against the full judged set in CI, then test whether it helps real search users before rolling it out.'],
+  ['More…', 'What else should we evaluate?', 'Why: good relevance scores are only part of a useful search experience. Test access, coverage, freshness, reliability and the actions built on top.']
 ];
 let data, step=0, queryId='Q1', judgeQueryId='Q1', indexName='sg-food-vector-workshop', saved={}, labels={}, snippets={}, sectionByStep={}, showAllSections=false, viralRank=0;
 let abSnapshot=null;
@@ -446,12 +447,58 @@ function compactSearchPanels(html){
   const takeaway=beforeMode?`${comparisonTakeaway(queryId,beforeMode,afterMode)}<br>${abLesson(queryId)}`:abLesson(queryId);
   return panel(label,`<div class="search-workflow"><section class="search-stage search-run"><h3><span class="stage-number">1</span> See the search request</h3>${request.innerHTML}${optional}</section><section class="search-stage search-inspect"><h3><span class="stage-number">2</span> Inspect the captured results and scores</h3>${preview.outerHTML}${callout('Look for',takeaway)}</section></div>`,'accent')
 }
+function moreContent(){
+  const scenarios=[
+    ['Permissions / RBAC','An employee searches for a customer contract.',
+      'Search exposes a restricted contract in a result or snippet.',
+      'Results, snippets and any generated answer use only documents this employee may access.',
+      'The relevant result set depends on the user. Permission changes must also reach caches and downstream tools.',
+      'Run the same query as different roles and tenants, including after access is revoked. Any unauthorized disclosure fails the release gate.'],
+    ['Query fan-out','“Find a vegetarian dinner recipe and where to buy the ingredients.”',
+      'One search answers the recipe question but misses the shopping task.',
+      'Separate searches cover recipes and ingredient availability; results are combined without duplicates.',
+      'More searches can improve coverage, but add cost, latency and opportunities for partial failure. Subqueries can also drift from the original intent.',
+      'Check each subtask, overall task completion, duplicate results, total cost and end-to-end latency. Test one source timing out.'],
+    ['Filters and constraints','“Peanut-free satay sauce available in my area.”',
+      'A popular sauce ranks first even though it contains peanuts or is outside the delivery area.',
+      'Eligible results satisfy the dietary and location requirements before being ranked.',
+      'A ranking boost is not a guarantee that a hard requirement is met. Missing or incorrect metadata can still produce unsafe or unusable results.',
+      'Measure constraint violations as well as relevance. Test missing metadata and no eligible results; make the uncertainty visible.'],
+    ['Freshness and indexing','A restaurant publishes new lunch prices.',
+      'Search still shows the archived menu; the new menu is missing.',
+      'The updated menu becomes searchable and stale or deleted versions stop appearing where they should not.',
+      'Relevance depends on when the query is asked. Delays in indexing, deletion or cache refresh can invalidate an otherwise good answer.',
+      'Measure update-to-search delay and stale-result rate. Test edits, deletions and the current-menu query over time.'],
+    ['Latency and reliability','Many users search while the reranker is unavailable.',
+      'Requests stall or fail even though basic search could return useful results.',
+      'A defined fallback returns available results within the latency budget.',
+      'Fallbacks trade some ranking quality for availability. Extra retrieval stages can worsen slow-request latency under load.',
+      'Compare relevance in normal and degraded modes, p95/p99 latency, error rate and cost. Test timeouts and peak traffic.'],
+    ['Language and vocabulary','Users search “brinjal”, “eggplant” or a mixed-language phrase.',
+      'The same intent gets useful results in one wording and poor results in another.',
+      'Equivalent intents retrieve useful answers across the supported wording and languages.',
+      'An overall average can hide failures for a language or user group. Translation and synonyms can also alter precise meaning.',
+      'Use reviewed examples for each language, local term and typo pattern. Compare relevance by group, including exact identifiers.'],
+    ['Clicks and popularity bias','A new recipe competes with an established, frequently clicked page.',
+      'Raw click counts keep promoting the old page, which then earns even more clicks.',
+      'Popularity is used alongside relevance, and new content still has a chance to be discovered.',
+      'Clicks reflect exposure and position as well as usefulness. A catchy result may attract clicks without completing the task.',
+      'Track task completion, reformulation and new-content exposure alongside CTR. Compare results across popularity and age groups.'],
+    ['Agent answers and actions','“Find the right recipe and add its ingredients to my shopping list.”',
+      'The agent retrieves useful evidence but invents an ingredient, cites the wrong source or modifies the wrong list.',
+      'The answer follows its evidence and the tool action changes only the intended, authorized list.',
+      'Good retrieval does not guarantee a correct answer or action. Tool permissions, untrusted document instructions and recovery from errors need separate checks.',
+      'Evaluate groundedness, citation support, tool choice and arguments, authorization and final task completion. Test misleading retrieved instructions and tool failures.']
+  ];
+  return panel('More situations to test',`<p>These are <b>illustrative before-and-after scenarios</b>, not implemented features or measured improvements. Use them to extend your evaluation set.</p><div class="more-scenario-grid">${scenarios.map(([title,task,before,after,impact,check],i)=>`<article class="more-scenario"><h3><span class="stage-number">${i+1}</span> ${esc(title)}</h3><p><b>User task:</b> ${esc(task)}</p><div class="online-proof-next"><div><b>Before</b><p>${esc(before)}</p></div><div><b>After · intended behaviour</b><p>${esc(after)}</p></div></div><p><b>Implications:</b> ${esc(impact)}</p><p><b>What to evaluate:</b> ${esc(check)}</p></article>`).join('')}</div><div class="improve-check"><b>Keep the same evaluation loop</b><span>Observe a failure → define the task and expected behaviour → compare candidates → check regressions → validate with users. Access violations and hard-constraint failures need explicit gates; a higher average NDCG cannot compensate for them.</span></div>`,'accent');
+}
 function content(){
   if(step===7)return evaluateContent();
   if(step===8)return improveContent();
   if(step===9)return studioVisualContent();
   if(step===10)return onlineContent();
   if(step===11)return onlineImproveContent();
+  if(step===12)return moreContent();
   const html=rawContent();
   if(step>=4&&step<=6)return compactSearchPanels(html);
   const groups={
@@ -512,7 +559,7 @@ function navigateStepByKeyboard(event){
   event.preventDefault();
   setStep(next);
 }
-function render(){snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · SERVERLESS VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=4&&step<=6;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===7?'Improve offline →':step===8?'Relevance Studio →':step===9?'Online event →':step===10?'Improve again →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
+function render(){snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · SERVERLESS VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=4&&step<=6;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===7?'Improve offline →':step===8?'Relevance Studio →':step===9?'Online event →':step===10?'Improve again →':step===11?'More scenarios →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
 function setStep(i){if(step===10&&i===11)viralActive=true;step=Math.max(0,Math.min(steps.length-1,i));sectionByStep[step]=0;showAllSections=false;status('');render();window.scrollTo(0,0)}
 async function loadJson(url,name){
   const response=await fetch(url);

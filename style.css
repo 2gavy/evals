@@ -589,3 +589,10 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .studio-benchmark-evidence figcaption { margin-top:7px; color:var(--muted); font-size:11px; }
 
 .online-search-problem .online-metric-cards { grid-template-columns: repeat(2,minmax(0,1fr)); }
+
+.more-scenario-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:18px 0; }
+.more-scenario { padding:16px; border:1px solid var(--line); border-radius:8px; background:#FAFCFF; }
+.more-scenario h3 { margin-top:0; }
+.more-scenario p { font-size:13px; }
+.more-scenario .online-proof-next { grid-template-columns:1fr; }
+@media(max-width:800px) { .more-scenario-grid { grid-template-columns:1fr; } }
