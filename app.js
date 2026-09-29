@@ -21,11 +21,12 @@ const steps = [
 let data, step=0, queryId='Q1', judgeQueryId='Q1', indexName='sg-food-vector-workshop', saved={}, labels={}, snippets={}, sectionByStep={}, showAllSections=false, viralRank=0;
 let abSnapshot=null;
 let viralActive=true;
+let onlineScenario=0;
 const abState={intro:{qid:'Q2',a:'keyword',b:'vector'},evaluate:{qid:'Q2',a:'keyword',b:'vector'},online:{qid:'Q2',a:'keyword',b:'hybrid'}};
 const studioState={qid:'Q1',strategy:'keyword'};
 const abModes={keyword:'Keyword · BM25',vector:'Semantic · vector',hybrid:'Hybrid · RRF'};
 
-function saveState(){try{localStorage.setItem(STORE,JSON.stringify({step,queryId,indexName,sectionByStep,viralActive}))}catch{}}
+function saveState(){try{localStorage.setItem(STORE,JSON.stringify({step,queryId,indexName,sectionByStep,viralActive,onlineScenario}))}catch{}}
 function status(message){$('#status').textContent=message}
 function doc(id){return data.documents.find(d=>d.id===id)}
 function query(id=queryId){return data.queries.find(q=>q.id===id)??(id===data.viralQuery?.id?data.viralQuery:undefined)}
@@ -372,6 +373,21 @@ function renderViralStory(){
   const target=$('#viral-results');if(!target)return;
   target.innerHTML=`<p class="online-event-note"><b>${data.onlineSimulation.directReferrals} direct social visits · simulated.</b> These visits are excluded from search CTR.</p>${viralBaseline()}${onlineMetrics()}`;
 }
+function onlineScenarioPicker(){
+  return `<div class="more-picker online-story-picker"><label for="online-scenario">Choose a scenario<select id="online-scenario"><option value="0" ${onlineScenario===0?'selected':''}>1. Viral recipe · click signal</option><option value="1" ${onlineScenario===1?'selected':''}>2. Shopping journey · behavior judgments</option></select></label><span>Same story continues across 11 Online → 12 Improve again</span></div>`;
+}
+const shoppingEvents=[
+  {session:'S101',id:'P01',title:'Everyday bottle · 500 ml',action:'Clicked',grade:1},
+  {session:'S102',id:'P02',title:'Travel bottle · 500 ml',action:'Clicked → Added to cart',grade:2},
+  {session:'S103',id:'P03',title:'Lock-lid bottle · 500 ml',action:'Clicked → Added to cart → Purchased',grade:3}
+];
+function shoppingOnlineContent(){
+  return panel('Clicks show interest. Purchases show a stronger signal.',`<p class="more-example-note">Fictional shop · illustrative events, not live traffic</p><p class="more-query">⌕ “500 ml leakproof water bottle”</p><div class="behavior-journey"><div><span aria-hidden="true">👆</span><b>Click</b><small>Looked at the item</small></div><span aria-hidden="true">→</span><div><span aria-hidden="true">🛒</span><b>Add to cart</b><small>Considered buying</small></div><span aria-hidden="true">→</span><div><span aria-hidden="true">✓</span><b>Purchase completed</b><small>Finished checkout</small></div></div><div class="more-comparison"><section class="more-before"><h4>Search returns <span>The same query in three example sessions</span></h4><ol class="more-search-hits">${shoppingEvents.map((item,i)=>`<li><div class="more-hit-path">#${i+1} · ${item.id}</div><strong>${esc(item.title)}</strong><p>500 ml · marketed as leakproof</p></li>`).join('')}</ol></section><section class="more-after"><h4>What users actually do <span>Each row is a separate session</span></h4><ol class="more-search-hits">${shoppingEvents.map(item=>`<li><div class="more-hit-path">${item.session} · ${item.id}</div><strong>${esc(item.action)}</strong><p>${esc(item.title)}</p></li>`).join('')}</ol></section></div><div class="improve-check"><b>Capture the journey</b><span>Record the query, result impressions and positions, item ID, session/search ID and event time. Link cart and confirmed purchase events back to that search within a defined attribution window.</span></div><p class="more-takeaway"><b>Next: 12 Improve again</b> turns these events into example behavior grades. Collect enough sessions before drawing conclusions.</p>`,'accent');
+}
+function shoppingImproveContent(){
+  const rankList=(items)=>`<ol class="more-search-hits">${items.map((item,i)=>`<li><div class="more-hit-path">#${i+1} · ${item.id}</div><strong>${esc(item.title)}</strong><p>Behavior grade ${item.grade} · ${esc(item.action)}</p></li>`).join('')}</ol>`;
+  return panel('Turn observed behavior into a ranking experiment',`<p class="more-example-note">Same fictional shopping journey from 11 Online · no ranking experiment has been run</p><p class="more-query">⌕ “500 ml leakproof water bottle”</p><section class="online-phase"><h3><span class="stage-number">1</span> Convert events into behavior grades</h3><div class="behavior-journey"><div><b>Click only</b><strong>1</strong></div><span aria-hidden="true">→</span><div><b>Click + cart</b><strong>2</strong></div><span aria-hidden="true">→</span><div><b>Click + cart + purchase</b><strong>3</strong></div></div><p class="result-legend">Use the highest stage for each search–item journey. A purchase scores <b>3, not 1 + 2 + 3</b>. No interaction stays unknown here.</p><div class="table-wrap"><table><thead><tr><th>Search session</th><th>Item</th><th>Highest stage</th><th>Behavior grade</th></tr></thead><tbody>${shoppingEvents.map(item=>`<tr><td>${item.session}</td><td>${item.id} · ${esc(item.title)}</td><td>${esc(item.action)}</td><td><b>${item.grade}</b></td></tr>`).join('')}</tbody></table></div><p class="result-legend">These three journeys illustrate the mapping. For a benchmark, aggregate many journeys into query–item labels using a documented rule and minimum evidence; review position bias, price and availability. Keep behavior labels separate from SME/LLM relevance grades.</p></section><section class="online-phase"><h3><span class="stage-number">2</span> Use the labels to test a candidate</h3><div class="fanout-split"><b>Behavior labels → tune or train a ranking strategy → evaluate held-out queries</b><p>Grades measure the candidate; saving them does not automatically change search order.</p></div><div class="fanout-arrow" aria-hidden="true">↓</div><div class="more-comparison"><section class="more-before"><h4>A · Current order <span>Illustrative baseline</span></h4>${rankList(shoppingEvents)}</section><section class="more-after"><h4>B · Desired order <span>Illustrative target, not a measured improvement</span></h4>${rankList([...shoppingEvents].reverse())}</section></div><p class="more-takeaway">Freeze a held-out judgment set and compare A/B NDCG in Studio or <code>_rank_eval</code>. Check all relevant queries, alongside the SME-reviewed benchmark.</p></section><section class="online-phase"><h3><span class="stage-number">3</span> Check whether shoppers benefit</h3><div class="online-proof-next"><div><b>Online A/B test</b><p>Randomize users between A and B. Compare purchase conversion per eligible search session; use cart rate and CTR to explain the journey.</p></div><div><b>Release and repeat</b><p>Check uncertainty, latency and regressions. Keep the offline benchmark in CI and feed new observed failures into the next evaluation.</p></div></div><p class="result-legend">Purchases are an implicit signal, not proof of relevance. A popular or cheaper item can convert better for reasons unrelated to search quality.</p></section>`,'accent');
+}
 function onlineContent(){
   return panel('High offline scores, a new online search fails',`<section class="online-phase"><h3><span class="stage-number">1</span> The post goes viral — inspect the search</h3><div class="viral-simulation"><div class="viral-story"><div><strong>🍞 Z&amp;V Cafe’s kaya toast recipe goes viral</strong><p>The post sends visitors to the recipe. Others later search for it but cannot find it.</p></div><div class="viral-status"><b>✓ Gone viral</b><small>500 simulated clicks</small></div></div><div class="viral-post"><small>Fictional social post · Z&amp;V Cafe</small><p>“Toast the bread, spread a thick layer of kaya, add cold butter, then cut. Serve with eggs and kopi.”</p></div><div id="viral-results" aria-live="polite"></div></div></section><section class="online-phase"><h3><span class="stage-number">2</span> Discover the gap, then judge the new task</h3><div class="online-proof-next"><div><b>Initial Studio benchmark: six queries</b><p>Hybrid was selected using Q1–Q6. Kaya toast was not in that set, so there is no saved relevance grade for this new query–document pair yet.</p></div><div><b>Next: bring the online search back to Studio</b><p>Add the kaya-toast task, review its document grades, then compare the ranking change across all seven queries in 12 Improve again.</p></div></div></section>`,'accent');
 }
@@ -506,8 +522,8 @@ function content(){
   if(step===7)return evaluateContent();
   if(step===8)return improveContent();
   if(step===9)return studioVisualContent();
-  if(step===10)return onlineContent();
-  if(step===11)return onlineImproveContent();
+  if(step===10)return onlineScenarioPicker()+(onlineScenario===1?shoppingOnlineContent():onlineContent());
+  if(step===11)return onlineScenarioPicker()+(onlineScenario===1?shoppingImproveContent():onlineImproveContent());
   if(step===12)return moreContent();
   const html=rawContent();
   if(step>=4&&step<=6)return compactSearchPanels(html);
@@ -525,6 +541,7 @@ function content(){
 }
 
 function wire(){
+  const onlinePicker=$('#online-scenario');if(onlinePicker)onlinePicker.onchange=event=>{onlineScenario=Number(event.target.value);sectionByStep[step]=0;render();$('#online-scenario').focus({preventScroll:true})};
   const moreSelect=$('#more-scenario-select');if(moreSelect)moreSelect.onchange=event=>{moreScenarioIndex=Number(event.target.value);render();$('#more-scenario-select').focus({preventScroll:true})};
   wireAbWorkbench();
   wireStudioScenario();
@@ -579,7 +596,7 @@ function navigateStepByKeyboard(event){
   event.preventDefault();
   setStep(next);
 }
-function render(){snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · SERVERLESS VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=4&&step<=6;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===7?'Improve offline →':step===8?'Relevance Studio →':step===9?'Online event →':step===10?'Improve again →':step===11?'More scenarios →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
+function render(){snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · SERVERLESS VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];if(onlineScenario===1&&(step===10||step===11)){$('#title').textContent=step===10?'Watch what shoppers do after searching':'Use behavior judgments to evaluate the next strategy';$('#why').textContent=step===10?'Clicks → carts → completed purchases. Capture the journey before assigning grades.':'Online events → behavior grades → offline comparison → online A/B test.';}$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=4&&step<=6;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===7?'Improve offline →':step===8?'Relevance Studio →':step===9?'Online event →':step===10?'Improve again →':step===11?'More scenarios →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
 function setStep(i){if(step===10&&i===11)viralActive=true;step=Math.max(0,Math.min(steps.length-1,i));sectionByStep[step]=0;showAllSections=false;status('');render();window.scrollTo(0,0)}
 async function loadJson(url,name){
   const response=await fetch(url);
@@ -600,6 +617,7 @@ async function init(){
   indexName=INDEX_PATTERN.test(restored.indexName??'')?restored.indexName:data.index;
   labels=Object.fromEntries([...data.queries,data.rerankProbe,data.viralQuery].map(q=>[q.id,{...q.labels}]));
   viralActive=restored.viralActive!==false;
+  onlineScenario=restored.onlineScenario===1?1:0;
   sectionByStep=restored.sectionByStep??{};
   sectionByStep[step]=0;
   await loadFixedResults(baseline,improved);
