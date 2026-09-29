@@ -374,7 +374,7 @@ function renderViralStory(){
   target.innerHTML=`<p class="online-event-note"><b>${data.onlineSimulation.directReferrals} direct social visits · simulated.</b> These visits are excluded from search CTR.</p>${viralBaseline()}${onlineMetrics()}`;
 }
 function onlineScenarioPicker(){
-  return `<div class="more-picker online-story-picker"><label for="online-scenario">Choose a scenario<select id="online-scenario"><option value="0" ${onlineScenario===0?'selected':''}>1. Viral recipe · click signal</option><option value="1" ${onlineScenario===1?'selected':''}>2. Shopping journey · behavior judgments</option></select></label><span>Same story continues across 11 Online → 12 Improve again</span></div>`;
+  return `<div class="more-picker online-story-picker"><label for="online-scenario">Choose a scenario<select id="online-scenario"><option value="0" ${onlineScenario===0?'selected':''}>1. 🍞 Viral recipe · click signal</option><option value="1" ${onlineScenario===1?'selected':''}>2. 🛒 Shopping journey · behavior judgments</option></select></label><span>Same story continues across 11 Online → 12 Improve again</span></div>`;
 }
 const shoppingEvents=[
   {session:'S101',id:'P01',title:'Everyday bottle · 500 ml',action:'Clicked',grade:1},
@@ -382,7 +382,7 @@ const shoppingEvents=[
   {session:'S103',id:'P03',title:'Lock-lid bottle · 500 ml',action:'Clicked → Added to cart → Purchased',grade:3}
 ];
 function shoppingOnlineContent(){
-  return panel('Clicks show interest. Purchases show a stronger signal.',`<p class="more-example-note">Fictional shop · illustrative events, not live traffic</p><p class="more-query">⌕ “500 ml leakproof water bottle”</p><div class="more-comparison"><section class="more-before"><h4>Search returns <span>The same query in three example sessions</span></h4><ol class="more-search-hits">${shoppingEvents.map((item,i)=>`<li><div class="more-hit-path">#${i+1} · ${item.id}</div><strong>${esc(item.title)}</strong><p>500 ml · marketed as leakproof</p></li>`).join('')}</ol></section><section class="more-after"><h4>How far did each shopper get? <span>Three shoppers · same search · different outcomes</span></h4><ol class="shopping-paths">${shoppingEvents.map((item,index)=>`<li><div class="shopping-person"><span aria-hidden="true">👤</span><b>Shopper ${index+1}</b><small>${item.session} · ${item.id}</small></div><strong>${esc(item.title)}</strong><div class="shopping-track" aria-label="${esc(item.action)}">${[['👆','Clicked'],['🛒','Cart'],['✓','Purchased']].map(([icon,label],i)=>`${i?'<span class="shopping-track-arrow" aria-hidden="true">→</span>':''}<span class="shopping-milestone ${i<item.grade?'is-reached':'is-unreached'}"><span aria-hidden="true">${icon}</span><b>${label}</b><small>${i<item.grade?'Done':'Not reached'}</small></span>`).join('')}</div><p class="shopping-stop">${['Stopped after viewing','Added to cart; no purchase','Completed the purchase'][index]}</p></li>`).join('')}</ol></section></div><div class="improve-check"><b>Capture the journey</b><span>Record the query, result impressions and positions, item ID, session/search ID and event time. Link cart and confirmed purchase events back to that search within a defined attribution window.</span></div><p class="more-takeaway"><b>Next: 12 Improve again</b> turns these events into example behavior grades. Collect enough sessions before drawing conclusions.</p>`,'accent');
+  return panel('Clicks show interest. Purchases show a stronger signal.',`<p class="more-example-note">Fictional shop · illustrative events, not live traffic</p><p class="more-query">⌕ “500 ml leakproof water bottle”</p><div class="more-comparison"><section class="more-before"><h4>Search returns <span>The same query in three example sessions</span></h4><ol class="more-search-hits">${shoppingEvents.map((item,i)=>`<li><div class="more-hit-path">#${i+1} · ${item.id}</div><strong>${esc(item.title)}</strong><p>500 ml · marketed as leakproof</p></li>`).join('')}</ol></section><section class="more-after"><h4>How far did each shopper get? <span>Three shoppers · same search · different outcomes</span></h4><ol class="shopping-paths">${shoppingEvents.map((item,index)=>`<li><div class="shopping-person"><span aria-hidden="true">${['👩','👨','🧑'][index]}</span><b>Shopper ${index+1}</b><small>${item.session} · ${item.id}</small></div><strong>${esc(item.title)}</strong><div class="shopping-track" aria-label="${esc(item.action)}">${[['👆','Clicked'],['🛒','Cart'],['✓','Purchased']].map(([icon,label],i)=>`${i?'<span class="shopping-track-arrow" aria-hidden="true">→</span>':''}<span class="shopping-milestone ${i<item.grade?'is-reached':'is-unreached'}"><span aria-hidden="true">${icon}</span><b>${label}</b><small>${i<item.grade?'Done':'Not reached'}</small></span>`).join('')}</div><p class="shopping-stop">${['Stopped after viewing','Added to cart; no purchase','Completed the purchase'][index]}</p></li>`).join('')}</ol></section></div><div class="improve-check"><b>Capture the journey</b><span>Record the query, result impressions and positions, item ID, session/search ID and event time. Link cart and confirmed purchase events back to that search within a defined attribution window.</span></div><p class="more-takeaway"><b>Next: 12 Improve again</b> turns these events into example behavior grades. Collect enough sessions before drawing conclusions.</p>`,'accent');
 }
 function shoppingImproveContent(){
   const rankList=(items)=>`<ol class="more-search-hits">${items.map((item,i)=>`<li><div class="more-hit-path">#${i+1} · ${item.id}</div><strong>${esc(item.title)}</strong><p>Behavior grade ${item.grade} · ${esc(item.action)}</p></li>`).join('')}</ol>`;
@@ -466,35 +466,35 @@ function compactSearchPanels(html){
 let moreScenarioIndex=0;
 function moreContent(){
   const scenarios=[
-    {title:'Permissions / RBAC',query:'What discount does Acme get?',role:true,
+    {title:'🔒 Permissions / RBAC',query:'What discount does Acme get?',role:true,
       before:{label:'Permissions missed',hits:[['Acme · Enterprise agreement','Contracts / Acme','Acme receives a 30% annual subscription discount.','🔒 Sales only · exposed'],['Customer discount guide','Help centre / Billing','Contact the account owner for customer-specific terms.','✓ Support access']],answer:'Acme gets a 30% discount.'},
       after:{label:'Permissions applied',hits:[['Customer discount guide','Help centre / Billing','Contact the account owner for customer-specific terms.','✓ Support access'],['Acme · Account directory','Help centre / Accounts','Account owner: Alex Tan.','✓ Support access']],answer:'Please contact Alex Tan for Acme’s discount details.'},
       takeaway:'Filter access before generation: even an accurate answer can leak confidential information.'},
-    {title:'Query fan-out',query:'Find a tofu dinner recipe and a nearby shop selling tofu.',
+    {title:'🔀 Query fan-out',query:'Find a tofu dinner recipe and a nearby shop selling tofu.',
       before:{label:'One recipe search',hits:[['Ginger tofu rice','Recipes / Dinner','Tofu, rice and ginger. Ready in 20 minutes.'],['Crispy tofu bowl','Recipes / Dinner','Pan-fried tofu with vegetables and rice.']],outcome:'Recipe found. Shop still missing.'},
       after:{label:'Recipe search + shop search',hits:[['Ginger tofu rice','Recipes / Dinner','Tofu, rice and ginger. Ready in 20 minutes.'],['Fresh Market · Tofu in stock','Stores / Nearby','400 m away · firm tofu available today.']],outcome:'Both parts of the question answered.'},
       takeaway:'The app splits, runs and combines the searches. Check that both tasks are covered and latency stays acceptable.'},
-    {title:'Filters and constraints',query:'Peanut-free sauce that delivers to Tampines.',
+    {title:'🎯 Filters and constraints',query:'Peanut-free sauce that delivers to Tampines.',
       before:{label:'Rank by relevance only',hits:[['Classic satay sauce','Shop / Sauces','Roasted peanuts, coconut milk and spices.','✕ Contains peanuts'],['Sunflower seed sauce','Shop / Sauces','Peanut-free · delivery to Jurong only.','✕ Outside delivery area']]},
       after:{label:'Filter first, then rank',hits:[['Coconut lime sauce','Shop / Sauces','Peanut-free · delivers to Tampines.','✓ Both requirements met'],['Tampines seed sauce','Shop / Sauces','Peanut-free · local delivery available.','✓ Both requirements met']]},
       takeaway:'A high rank cannot override a hard requirement; verify the product metadata too.'},
-    {title:'Freshness',query:'What is Rasa Corner’s current lunch price?',
+    {title:'🌿 Freshness',query:'What is Rasa Corner’s current lunch price?',
       before:{label:'Stale result',hits:[['Rasa Corner · Lunch menu','Menus / Last month','Lunch set: $8. This menu has been replaced.','✕ Archived']]},
       after:{label:'Updated result',hits:[['Rasa Corner · Lunch menu','Menus / Current','Lunch set: $10. Effective from this month.','✓ Current']]},
       takeaway:'Check how quickly updates replace stale results in search and caches.'},
-    {title:'Latency and reliability',query:'Hainanese chicken rice recipe',
+    {title:'⚡ Latency and reliability',query:'Hainanese chicken rice recipe',
       before:{label:'Reranker unavailable',message:'Search timed out.',outcome:'No results returned.'},
       after:{label:'Fall back to Hybrid',hits:[['Hainanese chicken rice','Recipes / Chicken','Poach chicken with ginger. Cook rice in chicken stock.'],['White chicken rice method','Recipes / Chicken','Simmer chicken, cool it, then serve with fragrant rice.']],outcome:'Search remains available.'},
       takeaway:'Return fallback results when a dependency fails; check latency and ranking quality.'},
-    {title:'Multilingual search · 中文 / English',query:'不放花生的沙爹酱怎么做？',translation:'How do I make satay sauce without peanuts?',
+    {title:'🌏 Multilingual search · 中文 / English',query:'不放花生的沙爹酱怎么做？',translation:'How do I make satay sauce without peanuts?',
       before:{label:'Chinese keywords against English documents',message:'没有找到相关食谱 · No recipes found.',outcome:'Useful English recipes exist, but the Chinese query misses them.'},
       after:{label:'Multilingual retrieval + optional reranking',hits:[['Peanut-free sunflower satay sauce','Recipes / English','Use sunflower seed butter, coconut milk and lime. No peanuts.','✓ Matches 不放花生 · without peanuts'],['Peanut-free coconut satay sauce','Recipes / English','Blend coconut milk, toasted seeds and spices.','✓ English source · Chinese search']]},
       takeaway:'Missing answers? Test multilingual embeddings. Wrong order? Test reranking. Compare Chinese and English results separately.'},
-    {title:'Popularity bias',query:'Vegetarian dinner in 15 minutes',
+    {title:'📈 Popularity bias',query:'Vegetarian dinner in 15 minutes',
       before:{label:'Raw clicks dominate',hits:[['Slow-roasted vegetable pie','Recipes / Popular','Vegetarian · 90 minutes.','✕ Popular, but too slow'],['Quick tofu bowl','Recipes / New','Vegetarian · ready in 15 minutes.','Few clicks · ranked lower']]},
       after:{label:'Relevance before popularity',hits:[['Quick tofu bowl','Recipes / New','Vegetarian · ready in 15 minutes.','✓ Fits the task'],['Chickpea salad','Recipes / Dinner','Vegetarian · ready in 10 minutes.','✓ Fits the task']]},
       takeaway:'Clicks can reflect exposure; check task success and whether new content gets seen.'},
-    {title:'Agent answers and actions',query:'Add the tofu rice ingredients to My groceries.',
+    {title:'🤖 Agent answers and actions',query:'Add the tofu rice ingredients to My groceries.',
       before:{label:'Correct result, wrong action',hits:[['Ginger tofu rice','Recipes / Dinner','Ingredients: tofu, rice, ginger.']],answer:'I’ve added chicken, rice and ginger.',action:'Shared office list updated ✕'},
       after:{label:'Grounded answer, correct action',hits:[['Ginger tofu rice','Recipes / Dinner','Ingredients: tofu, rice, ginger.']],answer:'I’ve added tofu, rice and ginger.',action:'My groceries updated ✓'},
       takeaway:'Correct retrieval is only the start: verify the ingredients, tool arguments and destination.'}
