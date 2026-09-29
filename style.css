@@ -668,3 +668,13 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 
 .more-shortcuts { color:var(--muted); font-size:11px; font-weight:400; }
 .more-shortcuts kbd { display:inline-block; padding:1px 5px; border:1px solid var(--line); border-radius:3px; background:white; font:inherit; }
+
+.scenario-flow { padding:12px; }
+.flow-example { margin-top:8px; padding:6px 8px; background:#edf7f4; border-radius:4px; font-size:12px; font-weight:600; color:#006b59; }
+.flow-result { background:white; border:1px solid #b5d9ce; border-radius:6px; padding-top:10px; }
+.flow-result-title { display:block; padding:0 10px; font-size:12px; color:#006b59; }
+.flow-result-note { display:block; padding:4px 10px 0; font-size:11px; color:#52617a; }
+.flow-result .more-search-hits { padding:8px 10px; }
+.flow-result .more-search-hits li { padding:8px; }
+.flow-result .more-search-hits p { margin:4px 0; }
+.flow-tool-result { margin:10px; padding:10px; background:#edf7f4; font-size:13px; line-height:1.6; color:#006b59; }
