@@ -665,3 +665,6 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .fanout-branches strong { display:block; color:#075bce; font-size:13px; }
 .fanout-branches p { margin:4px 0 0; }
 .fanout-flow .more-generated { margin:0; }
+
+.more-shortcuts { color:var(--muted); font-size:11px; font-weight:400; }
+.more-shortcuts kbd { display:inline-block; padding:1px 5px; border:1px solid var(--line); border-radius:3px; background:white; font:inherit; }

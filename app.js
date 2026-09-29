@@ -486,7 +486,7 @@ function moreContent(){
   const scenario=scenarios[moreScenarioIndex]||scenarios[0];
   const fanoutFlow=()=>`<section class="more-after" aria-label="After"><h4>After · target <span>App coordinates two searches</span></h4><div class="fanout-flow"><div class="fanout-split"><b>1 · Split in the app</b><p>A rule or LLM identifies two tasks: <strong>recipe + shop</strong>.</p></div><div class="fanout-arrow" aria-hidden="true">↙ &nbsp; ↘</div><b class="fanout-stage">2 · Search in parallel</b><div class="fanout-branches"><div><b>Recipe query</b><code>tofu dinner recipe</code><span>↓ Recipe index</span><strong>Ginger tofu rice</strong><p>Ready in 20 minutes.</p></div><div><b>Shop query</b><code>tofu in stock</code><small>Near the user’s supplied location</small><span>↓ Store inventory</span><strong>Fresh Market</strong><p>400 m away · tofu in stock.</p></div></div><div class="fanout-arrow" aria-hidden="true">↘ &nbsp; ↙</div><div class="more-generated"><b>3 · App combines → one answer</b><p>“Make <strong>Ginger tofu rice</strong>. Buy tofu at <strong>Fresh Market, 400 m away</strong>.”</p><span>Recipe + shop sources retained. Search returns each result set separately.</span></div></div></section>`;
   const lane=(value,after)=>`<section class="${after?'more-after':'more-before'}" aria-label="${after?'After':'Before'}"><h4>${after?'After · target':'Before'} <span>${esc(value.label)}</span></h4>${value.hits?`<ol class="more-search-hits">${value.hits.map(([title,path,snippet,access])=>`<li><div class="more-hit-path">${esc(path)}</div><strong>${esc(title)}</strong><p>${esc(snippet)}</p>${access?`<span class="more-hit-access">${esc(access)}</span>`:''}</li>`).join('')}</ol>`:`<div class="more-empty"><span aria-hidden="true">${moreScenarioIndex===4?'⏱':'⌕'}</span><strong>${esc(value.message)}</strong></div>`}${value.answer?`<div class="more-generated"><b>Generated answer</b><p>“${esc(value.answer)}”</p>${value.action?`<span>${esc(value.action)}</span>`:''}</div>`:''}${value.outcome?`<p class="more-outcome">${esc(value.outcome)}</p>`:''}</section>`;
-  return panel('See the difference',`<div class="more-picker"><label for="more-scenario-select">Choose a scenario<select id="more-scenario-select">${scenarios.map((item,i)=>`<option value="${i}" ${i===moreScenarioIndex?'selected':''}>${i+1}. ${esc(item.title)}</option>`).join('')}</select></label><span>Illustrative examples · not live runs</span></div><article class="more-scenario more-rbac-scenario">${scenario.role?'<div class="more-user-context"><span class="more-user-icon" aria-hidden="true">👤</span><div><span>Signed in as</span><strong>Support agent</strong></div><span class="more-role-limit"><span aria-hidden="true">🔒</span> No access to Sales contracts</span></div>':''}<p class="more-query"><span aria-hidden="true">⌕</span> “${esc(scenario.query)}”</p><div class="more-comparison">${lane(scenario.before,false)}${moreScenarioIndex===1?fanoutFlow():lane(scenario.after,true)}</div><p class="more-takeaway">${esc(scenario.takeaway)}</p></article>`,'accent');
+  return panel('See the difference',`<div class="more-picker"><label for="more-scenario-select">Choose a scenario<select id="more-scenario-select">${scenarios.map((item,i)=>`<option value="${i}" ${i===moreScenarioIndex?'selected':''}>${i+1}. ${esc(item.title)}</option>`).join('')}</select><small class="more-shortcuts"><kbd>↑</kbd> Previous · <kbd>↓</kbd> Next scenario</small></label><span>Illustrative examples · not live runs</span></div><article class="more-scenario more-rbac-scenario">${scenario.role?'<div class="more-user-context"><span class="more-user-icon" aria-hidden="true">👤</span><div><span>Signed in as</span><strong>Support agent</strong></div><span class="more-role-limit"><span aria-hidden="true">🔒</span> No access to Sales contracts</span></div>':''}<p class="more-query"><span aria-hidden="true">⌕</span> “${esc(scenario.query)}”</p><div class="more-comparison">${lane(scenario.before,false)}${moreScenarioIndex===1?fanoutFlow():lane(scenario.after,true)}</div><p class="more-takeaway">${esc(scenario.takeaway)}</p></article>`,'accent');
 }
 function content(){
   if(step===7)return evaluateContent();
@@ -548,9 +548,18 @@ function updateSectionView(){
 }
 function setSection(i){sectionByStep[step]=i;showAllSections=false;updateSectionView();window.scrollTo(0,0)}
 function navigateStepByKeyboard(event){
-  if(!['ArrowLeft','ArrowRight'].includes(event.key)||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||event.isComposing||event.repeat)return;
+  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||event.isComposing||event.repeat)return;
   const target=event.target;
   if(target instanceof Element&&target.closest('input, textarea, select, [contenteditable], [role="textbox"], [role="slider"]'))return;
+  if(event.key==='ArrowUp'||event.key==='ArrowDown'){
+    if(step!==12)return;
+    const picker=$('#more-scenario-select');
+    if(!picker)return;
+    event.preventDefault();
+    const nextScenario=Math.max(0,Math.min(picker.options.length-1,moreScenarioIndex+(event.key==='ArrowDown'?1:-1)));
+    if(nextScenario!==moreScenarioIndex){moreScenarioIndex=nextScenario;render();window.scrollTo(0,0)}
+    return;
+  }
   const next=step+(event.key==='ArrowRight'?1:-1);
   if(next<0||next>=steps.length)return;
   event.preventDefault();
