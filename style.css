@@ -650,3 +650,18 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .more-scenario .more-outcome { margin:0; padding:0 12px 12px; font-weight:600; }
 .more-empty { min-height:170px; display:flex; align-items:center; justify-content:center; gap:12px; padding:16px; }
 .more-empty>span { font-size:28px; }
+
+.fanout-flow { padding:12px; }
+.fanout-split { padding:10px; border:1px solid #b5d9ce; border-radius:6px; background:white; }
+.fanout-split b,.fanout-stage { font-size:12px; color:#006b59; }
+.fanout-split p { margin:5px 0 0; }
+.fanout-arrow { text-align:center; color:#008c72; font-size:22px; line-height:1.2; }
+.fanout-stage { display:block; margin-bottom:8px; text-align:center; }
+.fanout-branches { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.fanout-branches>div { min-width:0; padding:10px; background:white; border:1px solid #b5d9ce; border-radius:6px; }
+.fanout-branches b { display:block; font-size:12px; }
+.fanout-branches code { display:block; margin:6px 0; font-size:12px; white-space:normal; }
+.fanout-branches span,.fanout-branches small { display:block; color:#52617a; font-size:11px; margin:6px 0; }
+.fanout-branches strong { display:block; color:#075bce; font-size:13px; }
+.fanout-branches p { margin:4px 0 0; }
+.fanout-flow .more-generated { margin:0; }
