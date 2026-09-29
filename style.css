@@ -544,3 +544,8 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
   .ab-lanes { grid-template-columns: 1fr; }
   .ab-metrics { grid-template-columns: repeat(4,minmax(0,1fr)); }
 }
+
+.improve-score-strip > .score-improved { border: 2px solid #008F83; background: #E8F8F3; }
+.improve-score-strip .score-improved strong { color: #05645E; }
+.improve-score-strip > div > span { display: block; margin-top: 4px; font-size: 10px; line-height: 1.4; color: #05645E; }
+.ranking-outcome > b { color: #05645E; font-size: 15px; }
