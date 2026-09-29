@@ -25,7 +25,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 input, select, textarea { border: 1px solid #ABB4C4; border-radius: 7px; padding: 8px 10px; background: #fff; color: #1C1E23; }
 label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; font-weight: 750; }
 
-.topbar { position: sticky; top: 0; z-index: 20; background: var(--navy); color: #fff; padding: 8px max(20px, calc((100vw - 1180px) / 2)); box-shadow: 0 4px 16px #101C3F20; }
+.topbar { position: sticky; top: 0; z-index: 20; background: var(--navy); color: #fff; padding: 8px 20px; box-shadow: 0 4px 16px #101C3F20; }
 .topline { display: flex; justify-content: space-between; align-items: center; gap: 15px; min-height: 29px; }
 .panel-title-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
 .panel-title-row h2 { margin: 0; }
@@ -78,8 +78,8 @@ label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size
 .cache-hint { color: var(--muted); font-size: 13px; }
 .brand { font-size: 17px; font-weight: 850; letter-spacing: -.3px; }
 .brand span { color: var(--teal); font-weight: 500; margin-left: 7px; }
-#nav { display: flex; overflow-x: auto; gap: 2px; scrollbar-width: thin; margin-top: 5px; }
-#nav button { flex: 1 0 92px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: transparent; color: #D9E4FA; padding: 7px 4px 6px; font-size: 12px; line-height: 1.15; white-space: nowrap; }
+#nav { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 5px; }
+#nav button { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: transparent; color: #D9E4FA; padding: 7px 4px 6px; font-size: 12px; line-height: 1.15; white-space: nowrap; }
 #nav button span { color: #85A9E5; font-size: 10px; font-weight: 800; letter-spacing: .5px; }
 #nav button.active { color: #fff; border-bottom-color: var(--teal); background: #FFFFFF0D; }
 #nav button.active span { color: var(--teal); }
