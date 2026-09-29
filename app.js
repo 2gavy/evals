@@ -583,6 +583,12 @@ function navigateStepByKeyboard(event){
   const target=event.target;
   if(target instanceof Element&&target.closest('input, textarea, select, [contenteditable], [role="textbox"], [role="slider"]'))return;
   if(event.key==='ArrowUp'||event.key==='ArrowDown'){
+    if(step===10||step===11){
+      event.preventDefault();
+      const nextScenario=Math.max(0,Math.min(1,onlineScenario+(event.key==='ArrowDown'?1:-1)));
+      if(nextScenario!==onlineScenario){onlineScenario=nextScenario;sectionByStep[step]=0;render();window.scrollTo(0,0)}
+      return;
+    }
     if(step!==12)return;
     const picker=$('#more-scenario-select');
     if(!picker)return;
