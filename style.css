@@ -567,3 +567,10 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .viral-status b,.viral-status small { display:block; }
 .viral-status b { font-size:12px; }
 .viral-status small { margin-top:3px; font-size:10px; }
+
+.online-outcome-summary { margin:12px 0; padding:12px; border:1px solid #C9D9F4; border-radius:7px; background:#F2F7FF; }
+.online-outcome-summary > b { color:var(--midnight); }
+.online-outcome-summary p { margin:6px 0; font-size:12px; }
+.online-outcome-summary .online-metric-cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.ranking-demo-action { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin:12px 0; font-size:12px; }
+.ranking-demo-action button { flex-shrink:0; }
