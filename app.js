@@ -113,11 +113,9 @@ function abLesson(qid){return {
   Q5:'The safe sauce D11 can rank first while the peanut sauce D12 still appears. Inspect every visible result for the allergen risk.',
   Q6:'D14 is the current menu and D13 is archived. A good top hit does not remove an outdated result below it.'
 }[qid]}
-async function loadAbSnapshot(){
+async function loadAbSnapshot(snapshot){
   if(abSnapshot)return abSnapshot;
-  const response=await fetch('./cached-results.json');
-  if(!response.ok)throw Error(`Captured results are unavailable (HTTP ${response.status}).`);
-  const snapshot=await response.json();
+  snapshot??=await loadJson('./cached-results.json','Captured results');
   if(snapshot.index!==data.index||snapshot.documentCount!==data.documents.filter(d=>d.initial).length)throw Error('Captured results do not match this workshop dataset.');
   for(const q of data.queries){
     if(snapshot.queryTexts?.[q.id]!==q.text)throw Error(`Captured ${q.id} query does not match this workshop.`);
@@ -128,11 +126,9 @@ async function loadAbSnapshot(){
   }
   abSnapshot=snapshot;return snapshot
 }
-async function loadFixedResults(){
-  const baseline=await loadAbSnapshot();
-  const response=await fetch('./improved-results.json?v=20260928-jina-rerank');
-  if(!response.ok)throw Error(`Captured improvement examples are unavailable (HTTP ${response.status}).`);
-  const improved=await response.json();
+async function loadFixedResults(baselineSnapshot,improved){
+  const baseline=await loadAbSnapshot(baselineSnapshot);
+  improved??=await loadJson('./improved-results.json?v=20260928-jina-rerank','Captured improvement examples');
   if(improved.index!==data.index||improved.documentCount!==data.documents.length)throw Error('Captured improvements do not match this dataset.');
   saved={};
   for(const q of data.queries){
@@ -333,7 +329,7 @@ function studioStrategyPicker(){
   return `<div class="ab-toolbar"><label>Search strategy<select id="studio-strategy">${choices.map(([id,title])=>`<option value="${id}" ${id===selected[0]?'selected':''}>${esc(title)}</option>`).join('')}</select></label><span>Five candidates · compare all on Q1–Q6</span></div><section class="studio-card">${code(selected[1],selected[2](),'Copy strategy body')}</section>`;
 }
 function studioBenchmarkEvidence(){
-  return `<section class="studio-phase"><h3><span class="stage-number">3</span> Choose a strategy from the benchmark</h3><div class="improve-check"><b>Selected: Hybrid RRF · joint-highest NDCG</b><span>In this completed five-strategy, six-query Studio run, <b>Hybrid and Semantic tie at 0.8801 NDCG@3</b>; Jina scores 0.8157, recipe boost 0.7001 and Keyword 0.6511. All returned documents are rated. We choose Hybrid for the workshop. This result does not prove it beats Semantic, or that every query ranks its best answer first.</span></div><figure class="studio-benchmark-evidence"><div class="studio-benchmark-image"><img src="./studio-benchmark.png?v=five-strategies" alt="Actual Studio five-strategy benchmark on six queries: NDCG is 0.8801 for Hybrid and Semantic, 0.8157 for Jina, 0.7001 for recipe boost and 0.6511 for Keyword. All rows show 100% rated documents." loading="lazy"><span class="studio-benchmark-highlight" aria-hidden="true"></span></div><figcaption>Actual Relevance Studio capture · B4: Six queries, five strategies · evaluation 86d4610c · captured 29 September 2026. Outline marks the Hybrid row.</figcaption></figure><p><b>Read the scope:</b> this benchmark covers Q1–Q6. It does not tell us how Hybrid will handle new tasks that users search for after launch.</p><p><b>Grade ≠ rank:</b> Studio’s judgments evaluate a strategy; they do not automatically boost documents. Inspect each query as well as the average.</p></section>`;
+  return `<section class="studio-phase"><h3><span class="stage-number">3</span> Choose a strategy from the benchmark</h3><div class="improve-check"><b>Selected: Hybrid RRF · joint-highest NDCG</b><span>In this completed five-strategy, six-query Studio run, <b>Hybrid and Semantic tie at 0.8801 NDCG@3</b>; Jina scores 0.8157, recipe boost 0.7001 and Keyword 0.6511. All returned documents are rated. We choose Hybrid for the workshop. This result does not prove it beats Semantic, or that every query ranks its best answer first.</span></div><figure class="studio-benchmark-evidence"><div class="studio-benchmark-image"><img src="./studio-benchmark.png?v=five-strategies" alt="Actual Studio five-strategy benchmark on six queries: NDCG is 0.8801 for Hybrid and Semantic, 0.8157 for Jina, 0.7001 for recipe boost and 0.6511 for Keyword. All rows show 100% rated documents." loading="lazy" decoding="async" width="1280" height="720"><span class="studio-benchmark-highlight" aria-hidden="true"></span></div><figcaption>Actual Relevance Studio capture · B4: Six queries, five strategies · evaluation 86d4610c · captured 29 September 2026. Outline marks the Hybrid row.</figcaption></figure><p><b>Read the scope:</b> this benchmark covers Q1–Q6. It does not tell us how Hybrid will handle new tasks that users search for after launch.</p><p><b>Grade ≠ rank:</b> Studio’s judgments evaluate a strategy; they do not automatically boost documents. Inspect each query as well as the average.</p></section>`;
 }
 const studioTerms={Q1:['chicken rice','Hainanese','white chicken','poach'],Q2:['brinjal','eggplant','aubergine','sambal'],Q3:['mee goreng','noodles','stir-fry'],Q4:['RC-123','rice cooker','RC-999'],Q5:['satay sauce','peanut-free','peanut'],Q6:['Rasa Corner','lunch menu','current','archived']};
 function studioScenarioWorkbench(){
@@ -518,10 +514,18 @@ function navigateStepByKeyboard(event){
 }
 function render(){snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · SERVERLESS VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=4&&step<=6;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===7?'Improve offline →':step===8?'Relevance Studio →':step===9?'Online event →':step===10?'Improve again →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
 function setStep(i){if(step===10&&i===11)viralActive=true;step=Math.max(0,Math.min(steps.length-1,i));sectionByStep[step]=0;showAllSections=false;status('');render();window.scrollTo(0,0)}
+async function loadJson(url,name){
+  const response=await fetch(url);
+  if(!response.ok)throw Error(`${name} are unavailable (HTTP ${response.status}).`);
+  return response.json();
+}
 async function init(){
-  const response=await fetch('./workshop-data.json?v=20260928-jina-rerank');
-  if(!response.ok)throw Error(`Could not load workshop data (HTTP ${response.status}).`);
-  data=await response.json();
+  const [workshop,baseline,improved]=await Promise.all([
+    loadJson('./workshop-data.json?v=20260928-jina-rerank','Workshop data'),
+    loadJson('./cached-results.json','Captured results'),
+    loadJson('./improved-results.json?v=20260928-jina-rerank','Captured improvement examples')
+  ]);
+  data=workshop;
   let restored={};
   try{restored=JSON.parse(localStorage.getItem(STORE)||'{}')}catch{}
   step=Number.isInteger(restored.step)?Math.max(0,Math.min(steps.length-1,restored.step)):0;
@@ -531,7 +535,7 @@ async function init(){
   viralActive=restored.viralActive!==false;
   sectionByStep=restored.sectionByStep??{};
   sectionByStep[step]=0;
-  await loadFixedResults();
+  await loadFixedResults(baseline,improved);
   $('#index-name').value=indexName;
   $('#query-select').innerHTML=data.queries.map(q=>`<option value="${q.id}">${q.id} · ${esc(q.text)}</option>`).join('');
   $('#query-select').value=queryId;
