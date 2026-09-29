@@ -562,3 +562,8 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .viral-switch input:checked { background: #008F83; border-color: #008F83; }
 .viral-switch input:checked::before { left: 19px; }
 .viral-switch input:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+.viral-status { flex-shrink:0; padding:9px 13px; border:1px solid #008F83; border-radius:6px; background:#E2F7EF; color:#006B52; }
+.viral-status b,.viral-status small { display:block; }
+.viral-status b { font-size:12px; }
+.viral-status small { margin-top:3px; font-size:10px; }
