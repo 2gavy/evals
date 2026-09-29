@@ -549,3 +549,6 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .improve-score-strip .score-improved strong { color: #05645E; }
 .improve-score-strip > div > span { display: block; margin-top: 4px; font-size: 10px; line-height: 1.4; color: #05645E; }
 .ranking-outcome > b { color: #05645E; font-size: 15px; }
+
+.step-viral-state { margin: 12px 0; padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: #F2F7FF; }
+.step-viral-state p { margin: 4px 0 0; font-size: 12px; }
