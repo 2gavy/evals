@@ -449,7 +449,7 @@ function compactSearchPanels(html){
 }
 function moreContent(){
   const scenarios=[
-    ['Permissions / RBAC','“What discount does this customer get?” · Support role',
+    ['Permissions / RBAC','“What discount does Acme get?” · Support role',
       [['Retrieved context','Restricted contract reaches the model'],['Generated answer: “30% discount.”','Leaks confidential contract terms']],
       [['Retrieved context','Restricted contract excluded'],['Generated answer: “Ask the account owner.”','Uses the approved support guide']],
       'Filter by user permissions before generation. A factual answer can still leak restricted information.'],
@@ -482,8 +482,15 @@ function moreContent(){
       [['Tofu, rice, ginger added','Supported by recipe'],['My groceries updated','Correct authorized list']],
       'Evaluate the answer and the action, beyond retrieval.']
   ];
+  const rbacResults=filtered=>`<div class="more-search-label">Search results · signed in as Support</div><ol class="more-search-hits">${(filtered?[
+    ['Support guide · Customer discounts','Help centre / Billing','For customer-specific discounts, contact the account owner.','Support · allowed'],
+    ['Account directory · Acme','Help centre / Accounts','Account owner: Alex Tan. Contact the owner for contract questions.','Support · allowed']
+  ]:[
+    ['Acme · Enterprise agreement','Contracts / Acme / Agreement','Acme receives a 30% discount on its annual subscription.','Sales only · should be hidden'],
+    ['Support guide · Customer discounts','Help centre / Billing','For customer-specific discounts, contact the account owner.','Support · allowed']
+  ]).map(([title,path,snippet,access],i)=>`<li class="${!filtered&&i===0?'more-hit-leak':''}"><div class="more-hit-path">${esc(path)}</div><strong>${esc(title)}</strong><p>${esc(snippet)}</p><span class="more-hit-access">${esc(access)}</span></li>`).join('')}</ol><div class="more-generated"><b>Generated answer</b><p>${filtered?'“I can’t access Acme’s contract terms. Please contact Alex Tan, the account owner.”':'“Acme gets a 30% discount on its annual subscription.”'}</p><span>${filtered?'Based on permitted documents':'Leaks the restricted result above'}</span></div>`;
   const results=items=>`<ol class="more-results">${items.map(([title,note])=>`<li><strong>${esc(title)}</strong><span>${esc(note)}</span></li>`).join('')}</ol>`;
-  return panel('Same task. Better results.',`<p class="more-example-note">Illustrative results · not live runs</p><div class="more-scenario-grid">${scenarios.map(([title,task,before,after,impact],i)=>`<article class="more-scenario"><h3><span class="stage-number">${i+1}</span> ${esc(title)}</h3><p class="more-query">${esc(task)}</p><div class="more-comparison"><section class="more-before" aria-label="Before: ${esc(title)}"><h4>Before</h4>${results(before)}</section><section class="more-after" aria-label="After: ${esc(title)}"><h4>After · target</h4>${results(after)}</section></div><p class="more-impact">${esc(impact)}</p></article>`).join('')}</div>`,'accent');
+  return panel('Same task. Better results.',`<p class="more-example-note">Illustrative results · not live runs</p><div class="more-scenario-grid">${scenarios.map(([title,task,before,after,impact],i)=>`<article class="more-scenario ${i===0?'more-rbac-scenario':''}"><h3><span class="stage-number">${i+1}</span> ${esc(title)}</h3><p class="more-query">${esc(task)}</p><div class="more-comparison"><section class="more-before" aria-label="Before: ${esc(title)}"><h4>Before</h4>${i===0?rbacResults(false):results(before)}</section><section class="more-after" aria-label="After: ${esc(title)}"><h4>After · target</h4>${i===0?rbacResults(true):results(after)}</section></div><p class="more-impact">${esc(impact)}</p></article>`).join('')}</div>`,'accent');
 }
 function content(){
   if(step===7)return evaluateContent();
