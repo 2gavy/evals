@@ -639,3 +639,14 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .more-user-context strong { display:block; font-size:17px; color:#12357b; }
 .more-role-limit { margin-left:auto; font-size:13px; font-weight:600; color:#405373; }
 @media(max-width:580px) { .more-role-limit { margin-left:54px; } }
+
+.more-picker { display:flex; justify-content:space-between; align-items:end; flex-wrap:wrap; gap:12px; margin-bottom:16px; }
+.more-picker label { display:grid; gap:6px; font-size:12px; font-weight:700; }
+.more-picker select { min-width:280px; max-width:100%; padding:9px 12px; font-size:15px; color:var(--navy); border:1px solid var(--line); border-radius:6px; background:white; }
+.more-picker>span { font-size:12px; color:var(--muted); }
+.more-comparison h4 span { display:block; margin-top:5px; font-weight:400; color:#405373; }
+.more-query { padding:10px 12px; border:1px solid var(--line); border-radius:6px; background:white; }
+.more-scenario .more-takeaway { margin:14px 0 0; font-size:14px; font-weight:600; color:var(--navy); }
+.more-scenario .more-outcome { margin:0; padding:0 12px 12px; font-weight:600; }
+.more-empty { min-height:170px; display:flex; align-items:center; justify-content:center; gap:12px; padding:16px; }
+.more-empty>span { font-size:28px; }

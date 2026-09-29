@@ -16,7 +16,7 @@ const steps = [
   ['Studio', 'Scale offline evaluation with Relevance Studio', 'Why: scenarios, judgments, strategies and benchmarks make the six-query offline comparison repeatable.'],
   ['Online', 'A relevant recipe is buried when demand takes off', 'Why: Hybrid performed well on the original six queries. Online users now search for kaya toast—a task the initial benchmark did not cover.'],
   ['Improve again', 'Test, gate, and release the ranking change', 'Why: a promising offline score is only the start. Check the new strategy against the full judged set in CI, then test whether it helps real search users before rolling it out.'],
-  ['More…', 'What else should we evaluate?', 'Why: good relevance scores are only part of a useful search experience. Test access, coverage, freshness, reliability and the actions built on top.']
+  ['More…', 'What else should we evaluate?', 'One task. Before and after. What should change?']
 ];
 let data, step=0, queryId='Q1', judgeQueryId='Q1', indexName='sg-food-vector-workshop', saved={}, labels={}, snippets={}, sectionByStep={}, showAllSections=false, viralRank=0;
 let abSnapshot=null;
@@ -447,50 +447,45 @@ function compactSearchPanels(html){
   const takeaway=beforeMode?`${comparisonTakeaway(queryId,beforeMode,afterMode)}<br>${abLesson(queryId)}`:abLesson(queryId);
   return panel(label,`<div class="search-workflow"><section class="search-stage search-run"><h3><span class="stage-number">1</span> See the search request</h3>${request.innerHTML}${optional}</section><section class="search-stage search-inspect"><h3><span class="stage-number">2</span> Inspect the captured results and scores</h3>${preview.outerHTML}${callout('Look for',takeaway)}</section></div>`,'accent')
 }
+let moreScenarioIndex=0;
 function moreContent(){
   const scenarios=[
-    ['Permissions / RBAC','“What discount does Acme get?”',
-      [['Retrieved context','Restricted contract reaches the model'],['Generated answer: “30% discount.”','Leaks confidential contract terms']],
-      [['Retrieved context','Restricted contract excluded'],['Generated answer: “Ask the account owner.”','Uses the approved support guide']],
-      'Filter by user permissions before generation. A factual answer can still leak restricted information.'],
-    ['Query fan-out','“Vegetarian dinner + where to buy ingredients”',
-      [['Tofu rice recipe','Recipe found'],['Where to buy tofu?','Missing']],
-      [['Tofu rice recipe','Recipe search'],['Tofu · nearby grocery','Store search']],
-      'Covers both tasks; adds searches, latency and cost.'],
-    ['Filters and constraints','“Peanut-free sauce · delivers to me”',
-      [['Classic satay sauce','Contains peanuts'],['Seed-based sauce','Outside delivery area']],
-      [['Sunflower seed sauce','Peanut-free · delivers'],['Coconut lime sauce','Peanut-free · delivers']],
-      'Filter hard requirements before ranking; verify metadata.'],
-    ['Freshness and indexing','“Current lunch menu”',
-      [['Lunch menu · $8','Archived price'],['Updated menu · $10','Not searchable']],
-      [['Lunch menu · $10','Current price'],['Old menu','Removed from current results']],
-      'Updates and deletions must reach the index and cache.'],
-    ['Latency and reliability','“Chicken rice recipe” · reranker unavailable',
-      [['Loading…','Waiting for reranker'],['Request timed out','No results']],
-      [['Hainanese chicken rice','Hybrid fallback'],['Roasted chicken rice','Hybrid fallback']],
-      'Keep search available; fallback ranking may be weaker.'],
-    ['Language and vocabulary','“Brinjal recipe”',
-      [['No matching recipes','Brinjal not recognized'],['Eggplant recipe','Missed']],
-      [['Roasted eggplant','Matches brinjal'],['Aubergine curry','Matches brinjal']],
-      'Check each language and local term, not just the average.'],
-    ['Clicks and popularity bias','“Quick vegetarian dinner”',
-      [['Popular chicken roast','High clicks · wrong task'],['New tofu bowl','Buried · few clicks']],
-      [['New tofu bowl','Relevant · 15 minutes'],['Vegetable stir-fry','Relevant · 20 minutes']],
-      'Balance popularity with relevance; measure task completion.'],
-    ['Agent answers and actions','“Add tofu rice ingredients to My groceries”',
-      [['Chicken added','Not in the recipe'],['Shared office list updated','Wrong destination']],
-      [['Tofu, rice, ginger added','Supported by recipe'],['My groceries updated','Correct authorized list']],
-      'Evaluate the answer and the action, beyond retrieval.']
+    {title:'Permissions / RBAC',query:'What discount does Acme get?',role:true,
+      before:{label:'Permissions missed',hits:[['Acme · Enterprise agreement','Contracts / Acme','Acme receives a 30% annual subscription discount.','🔒 Sales only · exposed'],['Customer discount guide','Help centre / Billing','Contact the account owner for customer-specific terms.','✓ Support access']],answer:'Acme gets a 30% discount.'},
+      after:{label:'Permissions applied',hits:[['Customer discount guide','Help centre / Billing','Contact the account owner for customer-specific terms.','✓ Support access'],['Acme · Account directory','Help centre / Accounts','Account owner: Alex Tan.','✓ Support access']],answer:'Please contact Alex Tan for Acme’s discount details.'},
+      takeaway:'Filter access before generation: even an accurate answer can leak confidential information.'},
+    {title:'Query fan-out',query:'Find a tofu dinner recipe and a nearby shop selling tofu.',
+      before:{label:'One recipe search',hits:[['Ginger tofu rice','Recipes / Dinner','Tofu, rice and ginger. Ready in 20 minutes.'],['Crispy tofu bowl','Recipes / Dinner','Pan-fried tofu with vegetables and rice.']],outcome:'Recipe found. Shop still missing.'},
+      after:{label:'Recipe search + shop search',hits:[['Ginger tofu rice','Recipes / Dinner','Tofu, rice and ginger. Ready in 20 minutes.'],['Fresh Market · Tofu in stock','Stores / Nearby','400 m away · firm tofu available today.']],outcome:'Both parts of the question answered.'},
+      takeaway:'Split a multi-part question into searches; check coverage and the extra latency.'},
+    {title:'Filters and constraints',query:'Peanut-free sauce that delivers to Tampines.',
+      before:{label:'Rank by relevance only',hits:[['Classic satay sauce','Shop / Sauces','Roasted peanuts, coconut milk and spices.','✕ Contains peanuts'],['Sunflower seed sauce','Shop / Sauces','Peanut-free · delivery to Jurong only.','✕ Outside delivery area']]},
+      after:{label:'Filter first, then rank',hits:[['Coconut lime sauce','Shop / Sauces','Peanut-free · delivers to Tampines.','✓ Both requirements met'],['Tampines seed sauce','Shop / Sauces','Peanut-free · local delivery available.','✓ Both requirements met']]},
+      takeaway:'A high rank cannot override a hard requirement; verify the product metadata too.'},
+    {title:'Freshness',query:'What is Rasa Corner’s current lunch price?',
+      before:{label:'Stale result',hits:[['Rasa Corner · Lunch menu','Menus / Last month','Lunch set: $8. This menu has been replaced.','✕ Archived']]},
+      after:{label:'Updated result',hits:[['Rasa Corner · Lunch menu','Menus / Current','Lunch set: $10. Effective from this month.','✓ Current']]},
+      takeaway:'Check how quickly updates replace stale results in search and caches.'},
+    {title:'Latency and reliability',query:'Hainanese chicken rice recipe',
+      before:{label:'Reranker unavailable',message:'Search timed out.',outcome:'No results returned.'},
+      after:{label:'Fall back to Hybrid',hits:[['Hainanese chicken rice','Recipes / Chicken','Poach chicken with ginger. Cook rice in chicken stock.'],['White chicken rice method','Recipes / Chicken','Simmer chicken, cool it, then serve with fragrant rice.']],outcome:'Search remains available.'},
+      takeaway:'Return fallback results when a dependency fails; check latency and ranking quality.'},
+    {title:'Language and vocabulary',query:'Brinjal recipe',
+      before:{label:'Exact wording only',message:'No recipes found.',outcome:'Documents use “eggplant” or “aubergine”.'},
+      after:{label:'Recognize equivalent terms',hits:[['Roasted eggplant','Recipes / Vegetables','Roast eggplant with garlic and chilli.'],['Aubergine curry','Recipes / Vegetables','Simmer aubergine in a spiced tomato sauce.']]},
+      takeaway:'Test different words for the same intent, including local terms and languages.'},
+    {title:'Popularity bias',query:'Vegetarian dinner in 15 minutes',
+      before:{label:'Raw clicks dominate',hits:[['Slow-roasted vegetable pie','Recipes / Popular','Vegetarian · 90 minutes.','✕ Popular, but too slow'],['Quick tofu bowl','Recipes / New','Vegetarian · ready in 15 minutes.','Few clicks · ranked lower']]},
+      after:{label:'Relevance before popularity',hits:[['Quick tofu bowl','Recipes / New','Vegetarian · ready in 15 minutes.','✓ Fits the task'],['Chickpea salad','Recipes / Dinner','Vegetarian · ready in 10 minutes.','✓ Fits the task']]},
+      takeaway:'Clicks can reflect exposure; check task success and whether new content gets seen.'},
+    {title:'Agent answers and actions',query:'Add the tofu rice ingredients to My groceries.',
+      before:{label:'Correct result, wrong action',hits:[['Ginger tofu rice','Recipes / Dinner','Ingredients: tofu, rice, ginger.']],answer:'I’ve added chicken, rice and ginger.',action:'Shared office list updated ✕'},
+      after:{label:'Grounded answer, correct action',hits:[['Ginger tofu rice','Recipes / Dinner','Ingredients: tofu, rice, ginger.']],answer:'I’ve added tofu, rice and ginger.',action:'My groceries updated ✓'},
+      takeaway:'Correct retrieval is only the start: verify the ingredients, tool arguments and destination.'}
   ];
-  const rbacResults=filtered=>`<div class="more-search-label">Search results</div><ol class="more-search-hits">${(filtered?[
-    ['Support guide · Customer discounts','Help centre / Billing','For customer-specific discounts, contact the account owner.','Support · allowed'],
-    ['Account directory · Acme','Help centre / Accounts','Account owner: Alex Tan. Contact the owner for contract questions.','Support · allowed']
-  ]:[
-    ['Acme · Enterprise agreement','Contracts / Acme / Agreement','Acme receives a 30% discount on its annual subscription.','Sales only · should be hidden'],
-    ['Support guide · Customer discounts','Help centre / Billing','For customer-specific discounts, contact the account owner.','Support · allowed']
-  ]).map(([title,path,snippet,access],i)=>`<li class="${!filtered&&i===0?'more-hit-leak':''}"><div class="more-hit-path">${esc(path)}</div><strong>${esc(title)}</strong><p>${esc(snippet)}</p><span class="more-hit-access"><span aria-hidden="true">${!filtered&&i===0?'🔒':'✓'}</span> ${esc(access)}</span></li>`).join('')}</ol><div class="more-generated"><b>Generated answer</b><p>${filtered?'“I can’t access Acme’s contract terms. Please contact Alex Tan, the account owner.”':'“Acme gets a 30% discount on its annual subscription.”'}</p><span>${filtered?'Based on permitted documents':'Leaks the restricted result above'}</span></div>`;
-  const results=items=>`<ol class="more-results">${items.map(([title,note])=>`<li><strong>${esc(title)}</strong><span>${esc(note)}</span></li>`).join('')}</ol>`;
-  return panel('Same task. Better results.',`<p class="more-example-note">Illustrative results · not live runs</p><div class="more-scenario-grid">${scenarios.map(([title,task,before,after,impact],i)=>`<article class="more-scenario ${i===0?'more-rbac-scenario':''}"><h3><span class="stage-number">${i+1}</span> ${esc(title)}</h3>${i===0?'<div class="more-user-context"><span class="more-user-icon" aria-hidden="true">👤</span><div><span>Signed in as</span><strong>Support agent</strong></div><span class="more-role-limit"><span aria-hidden="true">🔒</span> No access to Sales contracts</span></div>':''}<p class="more-query">${esc(task)}</p><div class="more-comparison"><section class="more-before" aria-label="Before: ${esc(title)}"><h4>Before</h4>${i===0?rbacResults(false):results(before)}</section><section class="more-after" aria-label="After: ${esc(title)}"><h4>After · target</h4>${i===0?rbacResults(true):results(after)}</section></div><p class="more-impact">${esc(impact)}</p></article>`).join('')}</div>`,'accent');
+  const scenario=scenarios[moreScenarioIndex]||scenarios[0];
+  const lane=(value,after)=>`<section class="${after?'more-after':'more-before'}" aria-label="${after?'After':'Before'}"><h4>${after?'After · target':'Before'} <span>${esc(value.label)}</span></h4>${value.hits?`<ol class="more-search-hits">${value.hits.map(([title,path,snippet,access])=>`<li><div class="more-hit-path">${esc(path)}</div><strong>${esc(title)}</strong><p>${esc(snippet)}</p>${access?`<span class="more-hit-access">${esc(access)}</span>`:''}</li>`).join('')}</ol>`:`<div class="more-empty"><span aria-hidden="true">${moreScenarioIndex===4?'⏱':'⌕'}</span><strong>${esc(value.message)}</strong></div>`}${value.answer?`<div class="more-generated"><b>Generated answer</b><p>“${esc(value.answer)}”</p>${value.action?`<span>${esc(value.action)}</span>`:''}</div>`:''}${value.outcome?`<p class="more-outcome">${esc(value.outcome)}</p>`:''}</section>`;
+  return panel('See the difference',`<div class="more-picker"><label for="more-scenario-select">Choose a scenario<select id="more-scenario-select">${scenarios.map((item,i)=>`<option value="${i}" ${i===moreScenarioIndex?'selected':''}>${i+1}. ${esc(item.title)}</option>`).join('')}</select></label><span>Illustrative examples · not live runs</span></div><article class="more-scenario more-rbac-scenario">${scenario.role?'<div class="more-user-context"><span class="more-user-icon" aria-hidden="true">👤</span><div><span>Signed in as</span><strong>Support agent</strong></div><span class="more-role-limit"><span aria-hidden="true">🔒</span> No access to Sales contracts</span></div>':''}<p class="more-query"><span aria-hidden="true">⌕</span> “${esc(scenario.query)}”</p><div class="more-comparison">${lane(scenario.before,false)}${lane(scenario.after,true)}</div><p class="more-takeaway">${esc(scenario.takeaway)}</p></article>`,'accent');
 }
 function content(){
   if(step===7)return evaluateContent();
@@ -515,6 +510,7 @@ function content(){
 }
 
 function wire(){
+  const moreSelect=$('#more-scenario-select');if(moreSelect)moreSelect.onchange=event=>{moreScenarioIndex=Number(event.target.value);render();$('#more-scenario-select').focus({preventScroll:true})};
   wireAbWorkbench();
   wireStudioScenario();
   renderMethodPreview();
