@@ -602,7 +602,28 @@ function navigateStepByKeyboard(event){
   event.preventDefault();
   setStep(next);
 }
-function render(){snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · SERVERLESS VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];if(onlineScenario===1&&(step===10||step===11)){$('#title').textContent=step===10?'Watch what shoppers do after searching':'Use behavior judgments to evaluate the next strategy';$('#why').textContent=step===10?'Clicks → carts → completed purchases. Capture the journey before assigning grades.':'Online events → behavior grades → offline comparison → online A/B test.';}$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=4&&step<=6;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===7?'Improve offline →':step===8?'Relevance Studio →':step===9?'Online event →':step===10?'Improve again →':step===11?'More scenarios →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
+function decorateWorkshopHeadings(){
+  const pageIcons=['🎯','🛠️','🗂️','📥','🔎','🧠','🔀','📊','🔧','⚖️','🌐','🚀','🧭'];
+  const title=$('#title');
+  const icon=document.createElement('span');icon.className='page-heading-icon';icon.setAttribute('aria-hidden','true');icon.textContent=onlineScenario===1&&step===10?'🛒':pageIcons[step];title.prepend(icon);
+  const sectionIcons={
+    'Choose the search question':'❓','Compare the results and scores':'📊',
+    'Compare keyword, vector and hybrid':'🔎','Choose what to improve':'🎯',
+    'See the search request':'🔎','Inspect the captured results and scores':'📊',
+    'Set up scenarios and judgments':'⚖️','Run an online A/B test':'🧪',
+    'See the ranking improvement':'📈','Make this repeatable with CI/CD':'🔁',
+    'Convert events into behavior grades':'⚖️','Use the labels to test a candidate':'🧪',
+    'Check whether shoppers benefit':'🛒',
+    'Q1 · boost a useful keyword result':'🍚','Vegetarian chicken rice · rerank with Jina':'🌱'
+  };
+  document.querySelectorAll('#stage h3').forEach(heading=>{
+    const label=heading.textContent.replace(/^\d+\s*/,'').trim(),emoji=sectionIcons[label];
+    if(!emoji)return;
+    const badge=document.createElement('span');badge.className='section-heading-icon';badge.setAttribute('aria-hidden','true');badge.textContent=emoji;
+    const number=heading.querySelector('.stage-number');if(number)number.after(badge);else heading.prepend(badge);
+  });
+}
+function render(){snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · SERVERLESS VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];if(onlineScenario===1&&(step===10||step===11)){$('#title').textContent=step===10?'Watch what shoppers do after searching':'Use behavior judgments to evaluate the next strategy';$('#why').textContent=step===10?'Clicks → carts → completed purchases. Capture the journey before assigning grades.':'Online events → behavior grades → offline comparison → online A/B test.';}$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=4&&step<=6;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();decorateWorkshopHeadings();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===7?'Improve offline →':step===8?'Relevance Studio →':step===9?'Online event →':step===10?'Improve again →':step===11?'More scenarios →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
 function setStep(i){if(step===10&&i===11)viralActive=true;step=Math.max(0,Math.min(steps.length-1,i));sectionByStep[step]=0;showAllSections=false;status('');render();window.scrollTo(0,0)}
 async function loadJson(url,name){
   const response=await fetch(url);
