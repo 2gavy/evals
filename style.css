@@ -707,3 +707,7 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 
 .page-heading-icon { display:inline-block; margin-right:.3em; font-size:.85em; vertical-align:.04em; }
 .section-heading-icon { display:inline-block; margin-right:.4em; font-size:.95em; }
+
+.studio-unrated { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 12px; }
+.studio-unrated .studio-judgement { margin-top: 6px; background: #f8fafc; }
+.studio-unrated .studio-grade { white-space: nowrap; color: var(--muted); }
