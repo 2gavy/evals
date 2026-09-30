@@ -253,6 +253,36 @@
       "status": "current",
       "initial": true,
       "click_count": 0
+    },
+    {
+      "id": "D29",
+      "title": "Balcony orchid care",
+      "content": "Water balcony orchids when the potting medium starts to dry. Give them bright indirect light and good airflow.",
+      "category": "guide",
+      "status": "current",
+      "initial": true,
+      "click_count": 0,
+      "unratedExample": true
+    },
+    {
+      "id": "D30",
+      "title": "Bicycle tyre repair guide",
+      "content": "Remove the wheel, locate the puncture and patch or replace the inner tube. Inflate to the pressure printed on the tyre.",
+      "category": "guide",
+      "status": "current",
+      "initial": true,
+      "click_count": 0,
+      "unratedExample": true
+    },
+    {
+      "id": "D31",
+      "title": "Community library opening hours",
+      "content": "The fictional neighbourhood library opens from 10 am to 8 pm on weekdays and 10 am to 5 pm on weekends.",
+      "category": "guide",
+      "status": "current",
+      "initial": true,
+      "click_count": 0,
+      "unratedExample": true
     }
   ],
   "queries": [

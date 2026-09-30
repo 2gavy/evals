@@ -711,3 +711,20 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .studio-unrated { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 12px; }
 .studio-unrated .studio-judgement { margin-top: 6px; background: #f8fafc; }
 .studio-unrated .studio-grade { white-space: nowrap; color: var(--muted); }
+
+/* Contextual hint appears automatically alongside visible comparison results. */
+#ab-takeaway.floating-hint { position: absolute; top: 0; left: calc(100% + 40px); width: min(220px, calc((100vw - 1180px) / 2 - 12px)); margin: 0; padding: 0; border: 0; background: transparent; pointer-events: none; }
+#ab-takeaway.floating-hint[hidden] { display: block; visibility: hidden; }
+.ab-lanes.with-search-hint { display: grid; position: relative; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: start; }
+.with-search-hint .ab-lane { min-width: 0; }
+.with-search-hint .improve-lane-title small { display:block; font-weight:normal; color:var(--muted); margin-top:4px; }
+.floating-hint .hint-bubble { padding: 18px; border: 1px solid #a4dacf; border-radius: 18px 18px 4px 18px; background: #effbf7; color: #10213a; box-shadow: 0 10px 30px #101c3f26; animation: hint-arrive .22s ease-out; }
+.hint-bubble strong { display: block; }
+.hint-bubble p { font-size: 14px; line-height: 1.5; margin: 10px 0; }
+.hint-bubble small { display: block; font-size: 12px; line-height: 1.4; }
+@keyframes hint-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .floating-hint .hint-bubble { animation: none; } }
+@media (max-width: 1439px) { .ab-lanes.with-search-hint { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } #ab-takeaway.floating-hint { position: static; width: auto; grid-column: 2; margin-top: 4px; } }
+@media (max-width: 650px) { .ab-lanes.with-search-hint { grid-template-columns: minmax(0,1fr); } #ab-takeaway.floating-hint { grid-column: 1; } }
+
+@media (min-width: 1440px) { .floating-hint .hint-bubble::before { content: ""; position: absolute; left: -7px; top: 24px; width: 12px; height: 12px; background: #effbf7; border-left: 1px solid #a4dacf; border-bottom: 1px solid #a4dacf; transform: rotate(45deg); } }

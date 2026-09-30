@@ -1,7 +1,7 @@
 {
   "index": "sg-food-vector-workshop-v2",
-  "documentCount": 28,
-  "capturedAt": "2026-09-28T03:50:34.651074+00:00",
+  "documentCount": 31,
+  "capturedAt": "2026-09-30T14:55:44.747431+00:00",
   "fictionalReferralClicks": 500,
   "results": {
     "offline": {
@@ -9,15 +9,15 @@
         "recipeBoost": [
           {
             "id": "D01",
-            "score": 19.159134
+            "score": 19.827879
           },
           {
             "id": "D02",
-            "score": 17.489159
+            "score": 17.857323
           },
           {
             "id": "D18",
-            "score": 16.343245
+            "score": 16.679218
           }
         ]
       }
@@ -156,7 +156,7 @@
       ]
     },
     "offlineRerank": {
-      "capturedAt": "2026-09-28T14:41:30.135487+00:00",
+      "capturedAt": "2026-09-30T14:55:46.123531+00:00",
       "endpoint": ".jina-reranker-v3.5",
       "field": "content",
       "rankWindowSize": 10,
@@ -186,15 +186,15 @@
         "Q2": [
           {
             "id": "D19",
-            "score": 1.4786263
+            "score": 1.4814098
           },
           {
             "id": "D12",
-            "score": 0.97564155
+            "score": 0.9637653
           },
           {
             "id": "D04",
-            "score": 0.94767743
+            "score": 0.9486415
           }
         ],
         "Q3": [
@@ -256,7 +256,7 @@
       }
     },
     "rerankProbe": {
-      "capturedAt": "2026-09-28T14:41:29.901200+00:00",
+      "capturedAt": "2026-09-30T14:55:45.884791+00:00",
       "queryText": "vegetarian chicken rice recipe without chicken",
       "endpoint": ".jina-reranker-v3.5",
       "field": "content",

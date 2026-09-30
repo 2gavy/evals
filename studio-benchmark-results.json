@@ -1,0 +1,159 @@
+{
+  "documentCount": 31,
+  "evaluationId": "d997dd47-4fc0-46d7-a97f-ab86d47c33b5",
+  "completedAt": "2026-09-30T14:56:35.288310Z",
+  "status": "completed",
+  "summary": [
+    {
+      "strategy": "Hybrid + Jina reranker",
+      "metrics": {
+        "mrr": {
+          "avg": 0.8888888888888888,
+          "max": 1.0,
+          "min": 0.3333333333333333
+        },
+        "ndcg": {
+          "avg": 0.8080859543104593,
+          "max": 1.0,
+          "min": 0.3065735963827292
+        },
+        "precision": {
+          "avg": 0.3888888888888889,
+          "max": 0.6666666666666666,
+          "min": 0.3333333333333333
+        },
+        "recall": {
+          "avg": 0.7916666666666666,
+          "max": 1.0,
+          "min": 0.25
+        }
+      },
+      "unratedReturned": {
+        "count": 0,
+        "percent": 0.0
+      }
+    },
+    {
+      "strategy": "Hybrid \u00b7 RRF",
+      "metrics": {
+        "mrr": {
+          "avg": 0.9166666666666666,
+          "max": 1.0,
+          "min": 0.5
+        },
+        "ndcg": {
+          "avg": 0.8725614221828829,
+          "max": 1.0,
+          "min": 0.541942129480027
+        },
+        "precision": {
+          "avg": 0.4444444444444444,
+          "max": 0.6666666666666666,
+          "min": 0.3333333333333333
+        },
+        "recall": {
+          "avg": 0.875,
+          "max": 1.0,
+          "min": 0.25
+        }
+      },
+      "unratedReturned": {
+        "count": 0,
+        "percent": 0.0
+      }
+    },
+    {
+      "strategy": "Semantic \u00b7 vector",
+      "metrics": {
+        "mrr": {
+          "avg": 0.9166666666666666,
+          "max": 1.0,
+          "min": 0.5
+        },
+        "ndcg": {
+          "avg": 0.8725614221828829,
+          "max": 1.0,
+          "min": 0.541942129480027
+        },
+        "precision": {
+          "avg": 0.4444444444444444,
+          "max": 0.6666666666666666,
+          "min": 0.3333333333333333
+        },
+        "recall": {
+          "avg": 0.875,
+          "max": 1.0,
+          "min": 0.25
+        }
+      },
+      "unratedReturned": {
+        "count": 0,
+        "percent": 0.0
+      }
+    },
+    {
+      "strategy": "Q1 \u00b7 recipe boost",
+      "metrics": {
+        "mrr": {
+          "avg": 0.8333333333333334,
+          "max": 1.0,
+          "min": 0.0
+        },
+        "ndcg": {
+          "avg": 0.6925148870409142,
+          "max": 1.0,
+          "min": 0.0
+        },
+        "precision": {
+          "avg": 0.27777777777777773,
+          "max": 0.3333333333333333,
+          "min": 0.0
+        },
+        "recall": {
+          "avg": 0.625,
+          "max": 1.0,
+          "min": 0.0
+        }
+      },
+      "unratedReturned": {
+        "count": 0,
+        "percent": 0.0
+      }
+    },
+    {
+      "strategy": "Keyword \u00b7 BM25",
+      "metrics": {
+        "mrr": {
+          "avg": 0.7222222222222223,
+          "max": 1.0,
+          "min": 0.0
+        },
+        "ndcg": {
+          "avg": 0.6473530429175787,
+          "max": 1.0,
+          "min": 0.0
+        },
+        "precision": {
+          "avg": 0.27777777777777773,
+          "max": 0.3333333333333333,
+          "min": 0.0
+        },
+        "recall": {
+          "avg": 0.625,
+          "max": 1.0,
+          "min": 0.0
+        }
+      },
+      "unratedReturned": {
+        "count": 0,
+        "percent": 0.0
+      }
+    }
+  ],
+  "unratedExampleIds": [
+    "D29",
+    "D30",
+    "D31"
+  ],
+  "judgmentsChanged": false
+}

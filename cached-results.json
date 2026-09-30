@@ -1,7 +1,7 @@
 {
   "index": "sg-food-vector-workshop-v2",
-  "documentCount": 28,
-  "capturedAt": "2026-09-25T06:24:48+00:00",
+  "documentCount": 31,
+  "capturedAt": "2026-09-30T14:55:43+00:00",
   "queryTexts": {
     "Q1": "Hainanese chicken rice how to cook chicken poach time",
     "Q2": "brinjal",
@@ -15,15 +15,15 @@
       "keyword": [
         {
           "id": "D02",
-          "score": 16.489159
+          "score": 16.857323
         },
         {
           "id": "D18",
-          "score": 15.343245
+          "score": 15.679217
         },
         {
           "id": "D01",
-          "score": 11.159133
+          "score": 11.827879
         }
       ],
       "vector": [
@@ -59,7 +59,7 @@
       "keyword": [
         {
           "id": "D19",
-          "score": 4.41023
+          "score": 4.53449
         }
       ],
       "vector": [
@@ -95,15 +95,15 @@
       "keyword": [
         {
           "id": "D06",
-          "score": 9.557324
+          "score": 9.874257
         },
         {
           "id": "D23",
-          "score": 1.8682767
+          "score": 2.0088816
         },
         {
           "id": "D01",
-          "score": 1.237413
+          "score": 1.3236427
         }
       ],
       "vector": [
@@ -139,15 +139,15 @@
       "keyword": [
         {
           "id": "D09",
-          "score": 10.241168
+          "score": 10.58938
         },
         {
           "id": "D21",
-          "score": 5.80706
+          "score": 6.3325334
         },
         {
           "id": "D10",
-          "score": 4.689634
+          "score": 5.168752
         }
       ],
       "vector": [
@@ -183,15 +183,15 @@
       "keyword": [
         {
           "id": "D11",
-          "score": 9.197636
+          "score": 9.444581
         },
         {
           "id": "D12",
-          "score": 5.8840256
+          "score": 6.2090435
         },
         {
           "id": "D06",
-          "score": 1.5635885
+          "score": 1.6490979
         }
       ],
       "vector": [
@@ -227,15 +227,15 @@
       "keyword": [
         {
           "id": "D14",
-          "score": 11.741617
+          "score": 12.146244
         },
         {
           "id": "D13",
-          "score": 10.322301
+          "score": 10.664993
         },
         {
           "id": "D28",
-          "score": 1.7590457
+          "score": 1.840907
         }
       ],
       "vector": [
