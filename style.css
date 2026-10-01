@@ -761,3 +761,10 @@ blockquote { border-left: 4px solid var(--teal); padding-left: 14px; margin: 14p
 .ab-grade-badge.grade-3, .ab-grade-badge.grade-2 { background: #DDF5EA; color: #086342; }
 .ab-grade-badge.grade-1 { background: #FFF0CB; color: #72510A; }
 .ab-grade-badge.grade-0 { background: #FFF0F0; color: #A6262E; }
+
+.why-benchmark { margin: 0 0 24px; }
+.why-benchmark-crop { position: relative; aspect-ratio: 1148 / 250; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; }
+.why-benchmark-crop::after { content: ""; position: absolute; left: 0.2%; right: 0.2%; top: 14.4%; height: 16.4%; border: 3px solid #007f70; box-sizing: border-box; pointer-events: none; }
+.why-benchmark-crop img { position: absolute; display: block; width: 111.4983%; max-width: none; height: auto; left: -7.6655%; top: -108%; }
+.why-benchmark figcaption { margin-top: 10px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.why-benchmark figcaption b { color: var(--midnight); }
