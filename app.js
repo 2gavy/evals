@@ -88,7 +88,7 @@ function abResultCard(hit,rank,qid,showGrade,highlightIdeal=false,previousHits=n
 }
 function abLane(arm,mode,qid,phase,compareToMode=null){
   const hits=abSnapshot.results[qid][mode],m=metric(hits.map(h=>h.id),qid);
-  const showScores=phase==='online'||phase==='lesson'||phase==='evaluate';
+  const showScores=phase==='intro'||phase==='online'||phase==='lesson'||phase==='evaluate';
   const previousHits=compareToMode?abSnapshot.results[qid][compareToMode]:null;
   const previous=previousHits?metric(previousHits.map(h=>h.id),qid):null;
   const metricTile=(label,key)=>{const change=previous?m[key]>previous[key]+1e-9?'better':m[key]<previous[key]-1e-9?'worse':'':'';return `<span class="${change?'metric-'+change:''}">${label} <b>${fmt(m[key])}</b></span>`};
@@ -173,12 +173,12 @@ async function renderAbWorkbench(){
     $('#ab-ideal').hidden=phase==='online';
     if(phase!=='online')$('#ab-ideal').innerHTML=`<b>Ideal answer${ideals.length===1?'':'s'} to rank high:</b> ${ideals.map(id=>`${esc(id)} · ${esc(doc(id)?.title??'Unknown document')}${doc(id)?.initial?'':' <em>(not indexed yet)</em>'}`).join(' · ')}. ${idealNote}`;
     $('#ab-results-a').innerHTML=abLane('A',state.a,state.qid,phase);
-    $('#ab-results-b').innerHTML=abLane('B',state.b,state.qid,phase);
+    $('#ab-results-b').innerHTML=abLane('B',state.b,state.qid,phase,phase==='intro'?state.a:null);
     $('#ab-takeaway').innerHTML=`<b>${phase==='evaluate'?'What these scores tell you':'What to notice'}</b><p>${esc(state.a===state.b?'Both sides use the same search method, so their rankings match. Choose different methods to see what changes.':phase==='evaluate'?evalDiagnosis(state.qid):abLesson(state.qid))}</p>${phase==='online'?'<p>The score strip shows <b>offline relevance metrics</b> from judgments. The practice run below tests fictional clicks and task completion. Side-by-side inspection itself is not a randomized user A/B test.</p>':'<p>These captured Elasticsearch results and fixed relevance judgments give everyone the same metrics.</p>'}<p>Compare document ranks and content. Raw Elasticsearch <code>_score</code> values use different scales across search methods.</p>`;
     if(phase==='intro'){
       const takeaway=$('#ab-takeaway');takeaway.classList.add('floating-hint');takeaway.hidden=true;
       const lanes=root.querySelector('.ab-lanes');lanes.classList.add('with-search-hint');lanes.append(takeaway);
-      takeaway.innerHTML=`<div class="hint-bubble"><strong>💡 Look closely · ${esc(state.qid)}</strong><p>${esc(state.a===state.b?'Same method, same ranking! Choose a different method on one side to compare.':abLesson(state.qid))}</p><small>Compare answers and positions—not raw scores.</small></div>`;
+      takeaway.innerHTML=`<div class="hint-bubble"><strong>💡 Look closely · ${esc(state.qid)}</strong><p>${esc(state.a===state.b?'Same method, same ranking! Choose a different method on one side to compare.':abLesson(state.qid))}</p><small>Quality scores below each list use the same judgments. Green means B improved; amber means it dropped. Higher is better.</small></div>`;
       searchHintObserver?.disconnect();
       searchHintObserver=new IntersectionObserver(([entry])=>{takeaway.hidden=!entry.isIntersecting},{rootMargin:'-100px 0px -100px 0px',threshold:0.1});
       searchHintObserver.observe(root.querySelector('#ab-results-b'));
