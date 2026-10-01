@@ -23,13 +23,21 @@ let data, step=0, queryId='Q1', judgeQueryId='Q1', indexName='sg-food-vector-wor
 let abSnapshot=null;
 let viralActive=true;
 let onlineScenario=0;
-const abState={intro:{qid:'Q2',a:'keyword',b:'vector'},evaluate:{qid:'Q2',a:'keyword',b:'vector'},online:{qid:'Q2',a:'keyword',b:'hybrid'}};
+const abState={intro:{qid:'Q1',a:'keyword',b:'vector'},evaluate:{qid:'Q1',a:'keyword',b:'vector'},online:{qid:'Q1',a:'keyword',b:'hybrid'}};
 const studioState={qid:'Q1',strategy:'keyword'};
 const abModes={keyword:'Keyword · BM25',vector:'Semantic · vector',hybrid:'Hybrid · RRF'};
 
 function saveState(){try{localStorage.setItem(STORE,JSON.stringify({stepSchema:2,step,queryId,indexName,sectionByStep,viralActive,onlineScenario}))}catch{}}
 function status(message){$('#status').textContent=message}
 function doc(id){return data.documents.find(d=>d.id===id)}
+function selectWorkshopQuery(id){
+  queryId=data.queries.some(q=>q.id===id)?id:'Q1';
+  Object.values(abState).forEach(state=>{state.qid=queryId});
+  studioState.qid=queryId;
+  judgeQueryId=queryId;
+  if($('#query-select'))$('#query-select').value=queryId;
+  saveState();
+}
 function query(id=queryId){return data.queries.find(q=>q.id===id)??(id===data.viralQuery?.id?data.viralQuery:undefined)}
 function grade(qid,did){return Number(labels[qid]?.[did] ?? 0)}
 function snippet(method,path,body){return `${method} ${path}${body?'\n'+JSON.stringify(body,null,2):''}`}
@@ -97,7 +105,7 @@ function scoreExplanation(ids,qid,key){
   const ideal=Object.values(labels[qid]??{}).map(Number).sort((a,b)=>b-a).slice(0,K);
   const dcg=gs=>gs.reduce((sum,g,i)=>sum+(2**g-1)/Math.log2(i+2),0);
   const grades=ranked.map(p=>p.g),actual=dcg(grades),best=dcg(ideal);
-  const order=ranked.map((p,i)=>`#${i+1} ${p.id}: grade ${p.g}`).join(' · ')||'No results';
+  const order=ranked.map((p,i)=>`<div>#${i+1} ${esc(p.id)}: grade ${p.g}</div>`).join('')||'No results';
   const explanations={
     precision:`Relevant results ÷ ${K} positions = ${found} ÷ ${K} = ${fmt(found/K)}. Missing positions still count in the denominator.`,
     recall:`Relevant results found ÷ all known relevant documents = ${found} ÷ ${total} = ${fmt(total?found/total:null)}.`,
@@ -110,7 +118,7 @@ function scoreExplanation(ids,qid,key){
     rr:'RR@3 (reciprocal rank): How soon does the first useful result appear in the top 3?',
     ndcg:'NDCG@3: How close is the top 3 to the ideal ranking, with the most relevant results first?'
   };
-  return `<strong>${esc(meanings[key])}</strong><p>${esc(order)}</p><p>${esc(explanations[key])}</p><small>${key==='ndcg'?'Uses graded relevance and rank.':'Grades 2–3 count as relevant.'} Based on fixed judgments, not Elasticsearch _score.</small>`;
+  return `<strong>${esc(meanings[key])}</strong><div class="score-document-grades">${order}</div><p>${esc(explanations[key])}</p><small>${key==='ndcg'?'Uses graded relevance and rank.':'Grades 2–3 count as relevant.'} Based on fixed judgments, not Elasticsearch _score.</small>`;
 }
 function abLane(arm,mode,qid,phase,compareToMode=null){
   const hits=abSnapshot.results[qid][mode],m=metric(hits.map(h=>h.id),qid);
@@ -216,7 +224,7 @@ function wireAbWorkbench(){
   const root=$('#ab-workbench');if(!root)return;
   const phase=root.dataset.phase,state=abState[phase];
   if(phase!=='online'){if(phase!=='intro')root.querySelector('#ab-a').value=state.a;root.querySelector('#ab-b').value=state.b}
-  const update=()=>{state.qid=root.querySelector('#ab-query').value;if(phase!=='online'){state.a=phase==='intro'?'keyword':root.querySelector('#ab-a').value;state.b=root.querySelector('#ab-b').value}renderAbWorkbench()};
+  const update=()=>{selectWorkshopQuery(root.querySelector('#ab-query').value);if(phase!=='online'){state.a=phase==='intro'?'keyword':root.querySelector('#ab-a').value;state.b=root.querySelector('#ab-b').value}renderAbWorkbench()};
   root.querySelector('#ab-query').onchange=update;
   if(phase!=='online'){if(phase!=='intro')root.querySelector('#ab-a').onchange=update;root.querySelector('#ab-b').onchange=update}
   renderAbWorkbench()
@@ -382,7 +390,7 @@ function studioBenchmarkEvidence(){
 const studioTerms={Q1:['chicken rice','Hainanese','white chicken','poach'],Q2:['brinjal','eggplant','aubergine','sambal'],Q3:['mee goreng','noodles','stir-fry'],Q4:['RC-123','rice cooker','RC-999'],Q5:['satay sauce','peanut-free','peanut'],Q6:['Rasa Corner','lunch menu','current','archived']};
 function studioScenarioWorkbench(){
   if(!data.queries.some(q=>q.id===studioState.qid))studioState.qid='Q1';
-  return `<div class="studio-scenario" id="studio-scenario"><div class="studio-start"><b>Start with Q1 · Hainanese chicken rice</b><span>This is the offline ranking problem tested in Improve. Ask the SME to confirm the recipe task, then review D01 and D17 (direct answers) against D02 and D18 (search-tag pages). Inspect Q2–Q6 next for the full six-query baseline; use Q1 alone to compare the recipe boost.</span></div><div class="ab-toolbar"><label>Scenario question<select id="studio-query">${data.queries.map(q=>`<option value="${q.id}" ${q.id===studioState.qid?'selected':''}>${q.id} · ${esc(q.text)}</option>`).join('')}</select></label></div><div class="ab-lanes"><section class="ab-lane"><div class="ab-lane-head"><span aria-hidden="true">🔎</span><div class="improve-lane-title">Scenario · what the user needs</div></div><div id="studio-scenario-task"></div></section><section class="ab-lane"><div class="ab-lane-head"><span aria-hidden="true">⚖️</span><div class="improve-lane-title">Judgments · how well each document answers</div></div><div id="studio-scenario-grades"></div></section></div></div>`;
+  return `<div class="studio-scenario" id="studio-scenario"><div class="studio-start"><b>Review the selected query</b><span>Confirm the user task, then review its document judgments. Keep the same grades across strategies and benchmark all six queries. The recipe-boost example in Improve focuses on Q1.</span></div><div class="ab-toolbar"><label>Scenario question<select id="studio-query">${data.queries.map(q=>`<option value="${q.id}" ${q.id===studioState.qid?'selected':''}>${q.id} · ${esc(q.text)}</option>`).join('')}</select></label></div><div class="ab-lanes"><section class="ab-lane"><div class="ab-lane-head"><span aria-hidden="true">🔎</span><div class="improve-lane-title">Scenario · what the user needs</div></div><div id="studio-scenario-task"></div></section><section class="ab-lane"><div class="ab-lane-head"><span aria-hidden="true">⚖️</span><div class="improve-lane-title">Judgments · how well each document answers</div></div><div id="studio-scenario-grades"></div></section></div></div>`;
 }
 function renderStudioScenario(){
   const root=$('#studio-scenario');if(!root)return;
@@ -392,7 +400,7 @@ function renderStudioScenario(){
   const unrated=data.documents.filter(d=>d.unratedExample && !Object.prototype.hasOwnProperty.call(labels[q.id]??{},d.id)).slice(0,3);
   root.querySelector('#studio-scenario-grades').innerHTML=`<div class="studio-judgement-list">${judged.map(({id,rating})=>`<article class="studio-judgement"><span class="studio-grade grade-${rating}">Grade ${rating}</span><div><b>${esc(id)} · ${esc(doc(id)?.title??'Unknown document')}</b><p>${esc(doc(id)?.content??'')}</p></div></article>`).join('')}</div><p class="result-legend">0 wrong · 1 related · 2 useful · 3 direct answer.</p><div class="studio-unrated"><b>Other documents · not rated for this query</b><p class="result-legend">No AI grade is assigned here. Not rated means unknown—not grade 0.</p>${unrated.map(d=>`<article class="studio-judgement"><span class="studio-grade">Not rated</span><div><b>${esc(d.id)} · ${esc(d.title)}</b><p>${esc(d.content)}</p></div></article>`).join('')}</div>`;
 }
-function wireStudioScenario(){const root=$('#studio-scenario');if(!root)return;root.querySelector('#studio-query').onchange=event=>{studioState.qid=event.target.value;renderStudioScenario()};renderStudioScenario()}
+function wireStudioScenario(){const root=$('#studio-scenario');if(!root)return;root.querySelector('#studio-query').onchange=event=>{selectWorkshopQuery(event.target.value);renderStudioScenario()};renderStudioScenario()}
 function viralBaseline(){
   const q=data.viralQuery;
   const rows=saved.viral.hybrid.hits.map((hit,i)=>`<li><span>#${i+1} · ${esc(hit.id)}</span><b>${esc(doc(hit.id)?.title??'Unknown')}</b></li>`).join('');
@@ -595,7 +603,7 @@ function content(){
 }
 
 function wire(){
-  const goldenPicker=$('#golden-query');if(goldenPicker)goldenPicker.onchange=event=>{queryId=event.target.value;render();$('#golden-query').focus({preventScroll:true})};
+  const goldenPicker=$('#golden-query');if(goldenPicker)goldenPicker.onchange=event=>{selectWorkshopQuery(event.target.value);render();$('#golden-query').focus({preventScroll:true})};
   const onlinePicker=$('#online-scenario');if(onlinePicker)onlinePicker.onchange=event=>{onlineScenario=Number(event.target.value);sectionByStep[step]=0;render();$('#online-scenario').focus({preventScroll:true})};
   const moreSelect=$('#more-scenario-select');if(moreSelect)moreSelect.onchange=event=>{moreScenarioIndex=Number(event.target.value);render();$('#more-scenario-select').focus({preventScroll:true})};
   wireAbWorkbench();
@@ -638,18 +646,17 @@ function navigateStepByKeyboard(event){
   const target=event.target;
   if(target instanceof Element&&target.closest('input, textarea, select, [contenteditable], [role="textbox"], [role="slider"]'))return;
   if(event.key==='ArrowUp'||event.key==='ArrowDown'){
-    if(step===11||step===12){
-      event.preventDefault();
-      const nextScenario=Math.max(0,Math.min(1,onlineScenario+(event.key==='ArrowDown'?1:-1)));
-      if(nextScenario!==onlineScenario){onlineScenario=nextScenario;sectionByStep[step]=0;render();window.scrollTo(0,0)}
-      return;
-    }
-    if(step!==13)return;
-    const picker=$('#more-scenario-select');
+    const picker=step===0?$('#ab-query'):step===4?$('#golden-query'):
+      step>=5&&step<=7?$('#query-select'):step===10?$('#studio-query'):
+      step===11||step===12?$('#online-scenario'):step===13?$('#more-scenario-select'):null;
     if(!picker)return;
     event.preventDefault();
-    const nextScenario=Math.max(0,Math.min(picker.options.length-1,moreScenarioIndex+(event.key==='ArrowDown'?1:-1)));
-    if(nextScenario!==moreScenarioIndex){moreScenarioIndex=nextScenario;render();window.scrollTo(0,0)}
+    const nextIndex=Math.max(0,Math.min(picker.options.length-1,picker.selectedIndex+(event.key==='ArrowDown'?1:-1)));
+    if(nextIndex===picker.selectedIndex)return;
+    picker.selectedIndex=nextIndex;
+    picker.dispatchEvent(new Event('change',{bubbles:true}));
+    // Keep page shortcuts active after a picker re-render restores its focus.
+    if(document.activeElement instanceof HTMLSelectElement)document.activeElement.blur();
     return;
   }
   const next=step+(event.key==='ArrowRight'?1:-1);
@@ -678,7 +685,7 @@ function decorateWorkshopHeadings(){
     const number=heading.querySelector('.stage-number');if(number)number.after(badge);else heading.prepend(badge);
   });
 }
-function render(){searchHintObserver?.disconnect();snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];if(onlineScenario===1&&(step===11||step===12)){$('#title').textContent=step===11?'Watch what shoppers do after searching':'Use behavior judgments to evaluate the next strategy';$('#why').textContent=step===11?'Clicks → carts → completed purchases. Capture the journey before assigning grades.':'Online events → behavior grades → offline comparison → online A/B test.';}$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=5&&step<=7;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();decorateWorkshopHeadings();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===8?'Improve offline →':step===9?'Relevance Studio →':step===10?'Online event →':step===11?'Improve again →':step===12?'More scenarios →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
+function render(){selectWorkshopQuery(queryId);searchHintObserver?.disconnect();snippets={};$('#eyebrow').textContent=`STEP ${step+1} OF ${steps.length} · VECTOR DATABASE`;$('#title').textContent=steps[step][1];$('#why').textContent=steps[step][2];if(onlineScenario===1&&(step===11||step===12)){$('#title').textContent=step===11?'Watch what shoppers do after searching':'Use behavior judgments to evaluate the next strategy';$('#why').textContent=step===11?'Clicks → carts → completed purchases. Capture the journey before assigning grades.':'Online events → behavior grades → offline comparison → online A/B test.';}$('#nav').innerHTML=steps.map((s,i)=>`<button class="${i===step?'active':''}" data-step="${i}" ${i===step?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s[0])}</button>`).join('');const chooseQuery=step>=5&&step<=7;$('#workshop-context').hidden=step!==1&&!chooseQuery;$('#workshop-context').classList.toggle('index-only',step===1);$('#workshop-context').classList.toggle('search-only',chooseQuery);$('#index-control').hidden=step!==1;$('#query-control').hidden=!chooseQuery;$('#context-task').hidden=!chooseQuery;$('#context-task').innerHTML=chooseQuery?`<b>${query().id} task:</b> ${esc(query().task)}`:'';$('#stage').innerHTML=content();decorateWorkshopHeadings();$('#previous').disabled=step===0;$('#next').disabled=step===steps.length-1;$('#next').textContent=step===8?'Improve offline →':step===9?'Relevance Studio →':step===10?'Online event →':step===11?'Improve again →':step===12?'More scenarios →':'Next step →';document.querySelectorAll('[data-step]').forEach(button=>button.onclick=()=>setStep(Number(button.dataset.step)));document.querySelectorAll('[role="button"][data-step]').forEach(button=>button.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setStep(Number(button.dataset.step))}});wire();updateSectionView();saveState()}
 function setStep(i){if(step===11&&i===12)viralActive=true;step=Math.max(0,Math.min(steps.length-1,i));sectionByStep[step]=0;showAllSections=false;status('');render();window.scrollTo(0,0)}
 async function loadJson(url,name){
   const response=await fetch(url);
@@ -708,8 +715,8 @@ async function init(){
   $('#query-select').innerHTML=data.queries.map(q=>`<option value="${q.id}">${q.id} · ${esc(q.text)}</option>`).join('');
   $('#query-select').value=queryId;
   $('#index-name').onchange=event=>{const value=event.target.value.trim();if(!INDEX_PATTERN.test(value)){event.target.value=indexName;status('Use an index name beginning with a lowercase letter, then lowercase letters, digits, hyphens or underscores.');return}indexName=value;render();status('Index name updated in every Console request.')};
-  $('#query-select').onchange=event=>{queryId=event.target.value;render();status(`Workshop query changed to ${queryId}.`)};
-  $('#stage').onclick=event=>{const button=event.target.closest('[data-try-query]');if(!button)return;queryId=button.dataset.tryQuery;$('#query-select').value=queryId;render();status(`Workshop query changed to ${queryId}.`)};
+  $('#query-select').onchange=event=>{selectWorkshopQuery(event.target.value);render();status(`Workshop query changed to ${queryId}.`)};
+  $('#stage').onclick=event=>{const button=event.target.closest('[data-try-query]');if(!button)return;selectWorkshopQuery(button.dataset.tryQuery);render();status(`Workshop query changed to ${queryId}.`)};
   $('#previous').onclick=()=>setStep(step-1);
   $('#next').onclick=()=>setStep(step+1);
   $('#section-previous').onclick=()=>setSection((sectionByStep[step]||0)-1);
